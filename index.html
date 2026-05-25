@@ -1,0 +1,1307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>РусскийПро - Free Russian Learning</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+:root{
+  --bg:#0D1117;--bg2:#161B22;--bg3:#1C2333;
+  --gold:#FFD700;--gold2:#FFA500;
+  --green:#58CC02;--green2:#46a302;
+  --blue:#1CB0F6;--blue2:#0a8fc4;
+  --red:#FF4B4B;--red2:#cc3a3a;
+  --purple:#CE82FF;--pink:#FF86D0;
+  --orange:#FF9600;--teal:#1FE0D0;
+  --white:#FFFFFF;--muted:rgba(255,255,255,0.5);
+  --card:rgba(255,255,255,0.06);--card2:rgba(255,255,255,0.1);
+  --border:rgba(255,255,255,0.12);
+  --r:14px;--rs:10px;
+}
+html,body{height:100%;overflow:hidden;}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--white);display:flex;flex-direction:column;}
+
+/* ===== SPLASH ===== */
+#splash{position:fixed;inset:0;background:linear-gradient(135deg,#0D1117,#1a1045,#0D1117);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999;transition:opacity 0.6s;}
+.splash-flag{font-size:72px;animation:pulse 1.2s infinite alternate;}
+.splash-title{font-size:2.2rem;font-weight:900;margin:12px 0 4px;background:linear-gradient(90deg,#FFD700,#FF6B6B,#1CB0F6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.splash-sub{color:var(--muted);font-size:1rem;margin-bottom:32px;}
+.splash-bar{width:220px;height:5px;background:rgba(255,255,255,0.1);border-radius:3px;overflow:hidden;}
+.splash-fill{height:100%;background:linear-gradient(90deg,#FFD700,#58CC02);animation:fillbar 2.5s ease forwards;}
+@keyframes fillbar{to{width:100%;}}
+@keyframes pulse{to{transform:scale(1.1);}}
+
+/* ===== HEADER ===== */
+#header{background:var(--bg2);border-bottom:1px solid var(--border);padding:10px 16px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
+.logo-text{font-size:1.1rem;font-weight:900;background:linear-gradient(90deg,#FFD700,#FF6B6B);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.hdr-stats{display:flex;gap:10px;align-items:center;}
+.hdr-stat{display:flex;align-items:center;gap:4px;font-size:13px;font-weight:700;}
+.hdr-stat.streak{color:var(--orange);}
+.hdr-stat.xp{color:var(--gold);}
+.hdr-stat.hearts{color:var(--red);}
+
+/* ===== NAV ===== */
+#nav{background:var(--bg2);border-top:1px solid var(--border);display:flex;justify-content:space-around;padding:6px 0 max(6px,env(safe-area-inset-bottom));flex-shrink:0;}
+.nb{display:flex;flex-direction:column;align-items:center;gap:2px;background:none;border:none;color:var(--muted);cursor:pointer;font-size:10px;font-weight:600;padding:6px 12px;border-radius:var(--rs);transition:all 0.2s;font-family:inherit;}
+.nb .ni{font-size:20px;line-height:1;}
+.nb.active{color:var(--green);}
+.nb.active .ni{transform:scale(1.2);}
+
+/* ===== MAIN SCROLL ===== */
+#main{flex:1;overflow-y:auto;overflow-x:hidden;}
+.screen{display:none;padding:16px 16px 20px;max-width:480px;margin:0 auto;}
+.screen.active{display:block;animation:fadeUp 0.3s ease;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
+
+/* ===== COMMON ===== */
+.sec-title{font-size:1.2rem;font-weight:800;margin-bottom:16px;}
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:18px;}
+.btn{width:100%;padding:14px;border-radius:var(--rs);border:none;font-size:1rem;font-weight:700;cursor:pointer;font-family:inherit;transition:all 0.15s;margin-top:8px;}
+.btn:active{transform:scale(0.97);}
+.btn-green{background:var(--green);color:#fff;box-shadow:0 4px 0 var(--green2);}
+.btn-green:active{box-shadow:none;transform:translateY(3px);}
+.btn-blue{background:var(--blue);color:#fff;box-shadow:0 4px 0 var(--blue2);}
+.btn-blue:active{box-shadow:none;transform:translateY(3px);}
+.btn-ghost{background:var(--card);color:var(--white);border:1px solid var(--border);}
+.btn-red{background:var(--red);color:#fff;box-shadow:0 4px 0 var(--red2);}
+
+/* ===== HOME ===== */
+.daily-progress-card{background:linear-gradient(135deg,#1C2333,#0f1a30);border:2px solid rgba(88,204,2,0.3);border-radius:var(--r);padding:20px;margin-bottom:16px;}
+.dp-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;}
+.dp-title{font-size:14px;font-weight:700;color:var(--green);}
+.dp-count{font-size:1.5rem;font-weight:900;}
+.dp-bar{height:10px;background:rgba(255,255,255,0.1);border-radius:5px;overflow:hidden;}
+.dp-fill{height:100%;background:linear-gradient(90deg,var(--green),var(--teal));border-radius:5px;transition:width 0.5s ease;}
+.dp-label{font-size:12px;color:var(--muted);margin-top:6px;}
+.lesson-path{display:flex;flex-direction:column;gap:12px;}
+.unit-header{display:flex;align-items:center;gap:10px;padding:10px 16px;background:var(--card2);border-radius:var(--rs);border-left:3px solid var(--gold);}
+.unit-icon{font-size:24px;}
+.unit-info h3{font-size:14px;font-weight:700;}
+.unit-info p{font-size:12px;color:var(--muted);}
+.lesson-row{display:flex;justify-content:center;gap:16px;padding:4px 0;}
+.lesson-node{width:60px;height:60px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;cursor:pointer;border:3px solid transparent;transition:all 0.2s;position:relative;}
+.lesson-node:active{transform:scale(0.93);}
+.ln-done{background:var(--green);border-color:var(--green2);box-shadow:0 4px 0 var(--green2);}
+.ln-active{background:var(--blue);border-color:var(--blue2);box-shadow:0 4px 0 var(--blue2);animation:glow 2s infinite alternate;}
+.ln-locked{background:var(--card2);border-color:var(--border);color:var(--muted);}
+@keyframes glow{to{box-shadow:0 4px 0 var(--blue2),0 0 20px rgba(28,176,246,0.4);}}
+.ln-crown{position:absolute;top:-8px;font-size:14px;}
+
+/* ===== LESSON ENGINE ===== */
+#lesson-screen{position:fixed;inset:0;background:var(--bg);z-index:200;display:none;flex-direction:column;}
+#lesson-screen.open{display:flex;}
+.ls-header{padding:14px 16px;display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--border);flex-shrink:0;}
+.ls-close{background:none;border:none;color:var(--muted);font-size:22px;cursor:pointer;padding:4px;font-family:inherit;}
+.ls-progress{flex:1;height:8px;background:rgba(255,255,255,0.1);border-radius:4px;overflow:hidden;}
+.ls-prog-fill{height:100%;background:var(--green);border-radius:4px;transition:width 0.4s ease;}
+.ls-hearts{display:flex;gap:4px;}
+.heart-icon{font-size:18px;transition:all 0.3s;}
+.heart-icon.lost{filter:grayscale(1);opacity:0.3;}
+.ls-body{flex:1;overflow-y:auto;padding:20px 16px;}
+.ls-footer{padding:12px 16px;border-top:1px solid var(--border);flex-shrink:0;}
+
+/* Question Types */
+.q-type-label{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--blue);margin-bottom:8px;}
+.q-question{font-size:1.1rem;font-weight:700;margin-bottom:20px;line-height:1.5;}
+.q-tanglish{font-size:13px;color:var(--purple);background:rgba(206,130,255,0.08);padding:8px 12px;border-radius:var(--rs);margin-bottom:16px;}
+.big-word{font-size:3.5rem;font-weight:900;text-align:center;margin:20px 0;cursor:pointer;transition:transform 0.1s;}
+.big-word:active{transform:scale(0.92);}
+.listen-btn{width:80px;height:80px;border-radius:50%;background:var(--blue);border:none;font-size:2rem;cursor:pointer;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;box-shadow:0 6px 0 var(--blue2);transition:all 0.15s;font-family:inherit;}
+.listen-btn:active{box-shadow:none;transform:translateY(5px);}
+.options-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.opt{padding:16px 12px;border-radius:var(--rs);border:2px solid var(--border);background:var(--card);color:var(--white);font-size:0.95rem;font-weight:600;cursor:pointer;text-align:center;transition:all 0.15s;font-family:inherit;}
+.opt:hover{border-color:var(--blue);background:rgba(28,176,246,0.08);}
+.opt.correct{border-color:var(--green);background:rgba(88,204,2,0.12);color:var(--green);}
+.opt.wrong{border-color:var(--red);background:rgba(255,75,75,0.12);color:var(--red);}
+.opt.selected{border-color:var(--blue);background:rgba(28,176,246,0.1);}
+.opt-list{display:flex;flex-direction:column;gap:8px;}
+.opt-list .opt{text-align:left;padding:14px 16px;display:flex;align-items:center;gap:12px;}
+.opt-list .opt .opt-ru{font-size:1.1rem;font-weight:800;}
+.opt-list .opt .opt-meta{font-size:12px;color:var(--muted);}
+
+/* Feedback bar */
+.feedback-bar{position:fixed;bottom:0;left:0;right:0;padding:20px 16px;z-index:300;display:none;}
+.feedback-bar.show{display:block;animation:slideUp 0.3s ease;}
+@keyframes slideUp{from{transform:translateY(100%);}to{transform:translateY(0);}}
+.fb-correct{background:rgba(88,204,2,0.15);border-top:2px solid var(--green);}
+.fb-wrong{background:rgba(255,75,75,0.15);border-top:2px solid var(--red);}
+.fb-title{font-size:1.1rem;font-weight:800;margin-bottom:4px;}
+.fb-correct .fb-title{color:var(--green);}
+.fb-wrong .fb-title{color:var(--red);}
+.fb-sub{font-size:13px;color:var(--muted);margin-bottom:12px;}
+
+/* Speaking */
+.speak-area{text-align:center;padding:16px 0;}
+.mic-btn{width:90px;height:90px;border-radius:50%;background:linear-gradient(135deg,var(--red),var(--red2));border:none;font-size:2.2rem;cursor:pointer;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;box-shadow:0 6px 0 #9e1c1c;transition:all 0.15s;font-family:inherit;}
+.mic-btn.recording{animation:micPulse 0.8s infinite alternate;background:linear-gradient(135deg,#ff6b6b,var(--red));}
+.mic-btn:active{box-shadow:none;transform:translateY(5px);}
+@keyframes micPulse{to{box-shadow:0 0 30px rgba(255,75,75,0.6),0 6px 0 #9e1c1c;}}
+.speak-tip{font-size:13px;color:var(--muted);margin-bottom:8px;}
+.speak-result{font-size:1rem;font-weight:700;padding:10px 16px;border-radius:var(--rs);text-align:center;display:none;}
+.speak-result.ok{background:rgba(88,204,2,0.15);color:var(--green);display:block;}
+.speak-result.fail{background:rgba(255,75,75,0.15);color:var(--red);display:block;}
+
+/* Typing */
+.type-input{width:100%;padding:14px 16px;border-radius:var(--rs);border:2px solid var(--border);background:var(--card2);color:var(--white);font-size:1.1rem;font-weight:700;font-family:inherit;outline:none;text-align:center;}
+.type-input:focus{border-color:var(--blue);}
+.type-input.correct{border-color:var(--green);background:rgba(88,204,2,0.08);}
+.type-input.wrong{border-color:var(--red);background:rgba(255,75,75,0.08);}
+
+/* Word Builder */
+.word-bank{display:flex;flex-wrap:wrap;gap:8px;min-height:48px;padding:12px;background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:var(--rs);margin-bottom:12px;}
+.word-chip{padding:8px 14px;border-radius:var(--rs);border:2px solid var(--blue);background:rgba(28,176,246,0.1);color:var(--white);font-size:14px;font-weight:600;cursor:pointer;transition:all 0.15s;font-family:inherit;}
+.word-chip:active{transform:scale(0.93);}
+.word-chip.used{opacity:0.3;pointer-events:none;}
+.selected-chips{display:flex;flex-wrap:wrap;gap:8px;min-height:48px;padding:12px;border-bottom:2px solid var(--border);margin-bottom:16px;}
+.sel-chip{padding:8px 14px;border-radius:var(--rs);background:var(--card2);border:2px solid var(--border);color:var(--white);font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;}
+
+/* ===== RESULTS ===== */
+.result-screen{text-align:center;padding:20px 0;}
+.result-emoji{font-size:5rem;margin-bottom:12px;animation:bounceIn 0.5s ease;}
+@keyframes bounceIn{0%{transform:scale(0);}60%{transform:scale(1.2);}100%{transform:scale(1);}}
+.result-title{font-size:1.8rem;font-weight:900;margin-bottom:8px;}
+.result-sub{color:var(--muted);margin-bottom:24px;}
+.result-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:24px;}
+.rs-box{background:var(--card);border:1px solid var(--border);border-radius:var(--rs);padding:16px 10px;text-align:center;}
+.rs-num{font-size:1.6rem;font-weight:900;}
+.rs-lbl{font-size:11px;color:var(--muted);margin-top:2px;}
+
+/* ===== WORDS SCREEN ===== */
+.words-header{display:flex;gap:8px;margin-bottom:16px;overflow-x:auto;padding-bottom:4px;}
+.wtab{flex-shrink:0;padding:6px 14px;border-radius:20px;border:1px solid var(--border);background:var(--card);color:var(--muted);font-size:13px;cursor:pointer;font-family:inherit;transition:all 0.2s;}
+.wtab.active{background:var(--green);color:#fff;border-color:var(--green);font-weight:700;}
+.word-card{background:var(--card);border:1px solid var(--border);border-radius:var(--rs);padding:14px 16px;margin-bottom:8px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:all 0.2s;}
+.word-card:active{background:var(--card2);}
+.wc-left{flex:1;}
+.wc-ru{font-size:1.2rem;font-weight:800;}
+.wc-pron{font-size:11px;color:var(--teal);font-style:italic;margin-top:2px;}
+.wc-en{font-size:13px;color:var(--muted);}
+.wc-tanglish{font-size:11px;color:var(--purple);margin-top:2px;}
+.wc-audio{font-size:22px;flex-shrink:0;}
+.wc-learned{width:8px;height:8px;border-radius:50%;background:var(--green);flex-shrink:0;}
+
+/* ===== PRACTICE SCREEN ===== */
+.prac-modes{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px;}
+.pmode{border-radius:var(--r);padding:20px 16px;text-align:center;cursor:pointer;border:2px solid transparent;transition:all 0.2s;}
+.pmode:active{transform:scale(0.96);}
+.pmode .pm-icon{font-size:2.5rem;margin-bottom:8px;}
+.pmode h3{font-size:1rem;font-weight:700;margin-bottom:4px;}
+.pmode p{font-size:12px;opacity:0.7;}
+.pm-listen{background:linear-gradient(135deg,rgba(28,176,246,0.15),rgba(28,176,246,0.05));border-color:rgba(28,176,246,0.3);}
+.pm-speak{background:linear-gradient(135deg,rgba(255,75,75,0.15),rgba(255,75,75,0.05));border-color:rgba(255,75,75,0.3);}
+.pm-type{background:linear-gradient(135deg,rgba(255,215,0,0.15),rgba(255,215,0,0.05));border-color:rgba(255,215,0,0.3);}
+.pm-match{background:linear-gradient(135deg,rgba(88,204,2,0.15),rgba(88,204,2,0.05));border-color:rgba(88,204,2,0.3);}
+
+/* ===== PROFILE ===== */
+.profile-hero{text-align:center;margin-bottom:20px;}
+.avatar-ring{width:90px;height:90px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--orange));display:flex;align-items:center;justify-content:center;font-size:2.2rem;margin:0 auto 12px;box-shadow:0 0 30px rgba(255,215,0,0.3);}
+.profile-level{display:inline-block;background:linear-gradient(135deg,var(--gold),var(--orange));color:#000;padding:4px 16px;border-radius:20px;font-size:13px;font-weight:800;margin-bottom:8px;}
+.xp-bar-wrap{margin:12px 0;}
+.xp-bar-track{height:10px;background:rgba(255,255,255,0.1);border-radius:5px;overflow:hidden;margin-top:6px;}
+.xp-bar-fill{height:100%;background:linear-gradient(90deg,var(--gold),var(--orange));border-radius:5px;transition:width 1s ease;}
+.ach-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+.ach-card{background:var(--card);border:1px solid var(--border);border-radius:var(--rs);padding:14px 8px;text-align:center;transition:all 0.2s;}
+.ach-card.earned{border-color:var(--gold);background:rgba(255,215,0,0.06);}
+.ach-icon{font-size:1.8rem;display:block;margin-bottom:6px;filter:grayscale(1);opacity:0.4;}
+.ach-card.earned .ach-icon{filter:none;opacity:1;}
+.ach-name{font-size:10px;color:var(--muted);}
+.ach-card.earned .ach-name{color:var(--gold);font-weight:700;}
+
+/* ===== TOAST & CONFETTI ===== */
+.toast{position:fixed;top:70px;left:50%;transform:translateX(-50%);background:var(--green);color:#fff;font-weight:700;padding:10px 22px;border-radius:24px;z-index:9000;opacity:0;pointer-events:none;transition:opacity 0.3s;font-size:14px;white-space:nowrap;}
+.toast.show{opacity:1;}
+.toast.gold{background:linear-gradient(90deg,var(--gold),var(--orange));color:#000;}
+.toast.red{background:var(--red);}
+#confetti-box{position:fixed;inset:0;pointer-events:none;z-index:8000;overflow:hidden;}
+.conf{position:absolute;width:9px;height:9px;border-radius:2px;animation:fall linear forwards;}
+@keyframes fall{0%{transform:translateY(-20px) rotate(0deg);opacity:1;}100%{transform:translateY(110vh) rotate(720deg);opacity:0;}}
+
+/* ===== XP POPUP ===== */
+.xp-popup{position:fixed;font-size:1.2rem;font-weight:900;color:var(--gold);pointer-events:none;z-index:7000;animation:floatUp 1.2s ease forwards;}
+@keyframes floatUp{0%{opacity:1;transform:translateY(0);}100%{opacity:0;transform:translateY(-60px);}}
+
+/* Responsive */
+@media(max-width:380px){
+  .options-grid{grid-template-columns:1fr;}
+  .prac-modes{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<!-- SPLASH -->
+<div id="splash">
+  <div class="splash-flag">🇷🇺</div>
+  <div class="splash-title">РусскийПро</div>
+  <div class="splash-sub">Free Russian Learning App</div>
+  <div class="splash-bar"><div class="splash-fill" style="width:0"></div></div>
+</div>
+
+<!-- TOAST & CONFETTI -->
+<div class="toast" id="toast"></div>
+<div id="confetti-box"></div>
+
+<!-- HEADER -->
+<div id="header">
+  <div class="logo-text">🇷🇺 РусскийПро</div>
+  <div class="hdr-stats">
+    <div class="hdr-stat streak">🔥 <span id="hStreak">1</span></div>
+    <div class="hdr-stat xp">⭐ <span id="hXP">0</span></div>
+    <div class="hdr-stat hearts">❤️ <span id="hHearts">5</span></div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div id="main">
+
+  <!-- HOME -->
+  <div class="screen active" id="sc-home">
+    <div class="daily-progress-card">
+      <div class="dp-header">
+        <div class="dp-title">📅 Today's Goal</div>
+        <div class="dp-count"><span id="wordsToday">0</span>/50</div>
+      </div>
+      <div class="dp-bar"><div class="dp-fill" id="dpFill" style="width:0%"></div></div>
+      <div class="dp-label" id="dpLabel">Complete 50 words to earn today's reward! 🏆</div>
+    </div>
+
+    <div class="lesson-path" id="lessonPath"></div>
+  </div>
+
+  <!-- WORDS -->
+  <div class="screen" id="sc-words">
+    <div class="sec-title">📖 All Words</div>
+    <div class="words-header" id="wordTabs"></div>
+    <div id="wordListEl"></div>
+  </div>
+
+  <!-- PRACTICE -->
+  <div class="screen" id="sc-practice">
+    <div class="sec-title">🎯 Practice</div>
+    <div class="prac-modes">
+      <div class="pmode pm-listen" onclick="startPractice('listen')">
+        <div class="pm-icon">👂</div>
+        <h3>Listening</h3>
+        <p>Hear & identify Russian words</p>
+      </div>
+      <div class="pmode pm-speak" onclick="startPractice('speak')">
+        <div class="pm-icon">🎤</div>
+        <h3>Speaking</h3>
+        <p>Speak Russian words aloud</p>
+      </div>
+      <div class="pmode pm-type" onclick="startPractice('type')">
+        <div class="pm-icon">✍️</div>
+        <h3>Typing</h3>
+        <p>Type the translation</p>
+      </div>
+      <div class="pmode pm-match" onclick="startPractice('match')">
+        <div class="pm-icon">🃏</div>
+        <h3>Match Pairs</h3>
+        <p>Match Russian & English</p>
+      </div>
+    </div>
+
+    <div class="card" style="margin-bottom:12px;">
+      <div style="font-size:13px;font-weight:700;color:var(--gold);margin-bottom:8px;">📊 Practice Stats</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+        <div style="text-align:center;"><div style="font-size:1.4rem;font-weight:900;" id="ps-accuracy">0%</div><div style="font-size:11px;color:var(--muted);">Accuracy</div></div>
+        <div style="text-align:center;"><div style="font-size:1.4rem;font-weight:900;color:var(--green);" id="ps-sessions">0</div><div style="font-size:11px;color:var(--muted);">Sessions</div></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div style="font-size:13px;font-weight:700;color:var(--purple);margin-bottom:10px;">💡 Tanglish Tips</div>
+      <div id="tanglishTip" style="font-size:14px;line-height:1.7;color:rgba(255,255,255,0.8);"></div>
+    </div>
+  </div>
+
+  <!-- PROFILE -->
+  <div class="screen" id="sc-profile">
+    <div class="profile-hero">
+      <div class="avatar-ring">🧑‍🎓</div>
+      <div class="profile-level" id="profileLevel">Level 1 — Beginner</div>
+      <div style="font-size:14px;color:var(--muted);" id="profileName">Russian Learner</div>
+      <div class="xp-bar-wrap">
+        <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--muted);">
+          <span id="xpLabel">0 XP</span><span id="xpNext">100 to next</span>
+        </div>
+        <div class="xp-bar-track"><div class="xp-bar-fill" id="xpFill" style="width:0%"></div></div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-bottom:16px;">
+      <div style="font-size:13px;font-weight:700;color:var(--blue);margin-bottom:12px;">📈 My Progress</div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;text-align:center;">
+        <div><div style="font-size:1.4rem;font-weight:900;color:var(--green);" id="pr-words">0</div><div style="font-size:11px;color:var(--muted);">Words Learned</div></div>
+        <div><div style="font-size:1.4rem;font-weight:900;color:var(--gold);" id="pr-streak">1</div><div style="font-size:11px;color:var(--muted);">Day Streak</div></div>
+        <div><div style="font-size:1.4rem;font-weight:900;color:var(--purple);" id="pr-lessons">0</div><div style="font-size:11px;color:var(--muted);">Lessons Done</div></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div style="font-size:13px;font-weight:700;color:var(--gold);margin-bottom:12px;">🏆 Achievements</div>
+      <div class="ach-grid" id="achGrid"></div>
+    </div>
+  </div>
+
+</div><!-- end main -->
+
+<!-- NAV -->
+<div id="nav">
+  <button class="nb active" onclick="goTo('home')" id="nb-home"><span class="ni">🏠</span>Home</button>
+  <button class="nb" onclick="goTo('words')" id="nb-words"><span class="ni">📖</span>Words</button>
+  <button class="nb" onclick="goTo('practice')" id="nb-practice"><span class="ni">🎯</span>Practice</button>
+  <button class="nb" onclick="goTo('profile')" id="nb-profile"><span class="ni">👤</span>Profile</button>
+</div>
+
+<!-- LESSON SCREEN (full screen overlay) -->
+<div id="lesson-screen">
+  <div class="ls-header">
+    <button class="ls-close" onclick="closeLessonScreen()">✕</button>
+    <div class="ls-progress"><div class="ls-prog-fill" id="lsProg" style="width:0%"></div></div>
+    <div class="ls-hearts" id="lsHearts"></div>
+  </div>
+  <div class="ls-body" id="lsBody"></div>
+  <div class="ls-footer" id="lsFooter"></div>
+</div>
+
+<!-- FEEDBACK BAR -->
+<div class="feedback-bar" id="feedbackBar">
+  <div class="fb-title" id="fbTitle"></div>
+  <div class="fb-sub" id="fbSub"></div>
+  <button class="btn" id="fbBtn" onclick="nextQuestion()"></button>
+</div>
+
+<script>
+// ============================================================
+// MASTER WORD DATABASE — 300 unique words, no repeats
+// Fields: ru, en, pron (how to say), tanglish (Tamil explanation), category
+// ============================================================
+const WORDS = [
+// === GREETINGS ===
+{ru:'Привет',en:'Hello',pron:'pree-VYET',tanglish:'Namba "Vanakkam" maari solradhuku "Privyet" nu sollu',cat:'Greetings'},
+{ru:'Здравствуйте',en:'Good day (formal)',pron:'ZDRA-stvooy-tye',tanglish:'Periyavangalukku respectfully solra "Vanakkam" — formal version',cat:'Greetings'},
+{ru:'Пока',en:'Bye (casual)',pron:'pa-KA',tanglish:'Friends kitta "Bye pa" solramaari "Paka" nu solu',cat:'Greetings'},
+{ru:'До свидания',en:'Goodbye (formal)',pron:'da svee-DA-nee-ya',tanglish:'"Da Svidanya" — Cinema la kaadhuvom, means "until we meet again"',cat:'Greetings'},
+{ru:'Доброе утро',en:'Good morning',pron:'DOB-ro-ye OO-tra',tanglish:'"Dobroe Utro" — "Utro" means morning, like our "Kaalai Vanakkam"',cat:'Greetings'},
+{ru:'Добрый день',en:'Good afternoon',pron:'DOB-riy dyen',tanglish:'"Dyen" means day. "Madhiya Vanakkam" maathiri',cat:'Greetings'},
+{ru:'Добрый вечер',en:'Good evening',pron:'DOB-riy VYE-cher',tanglish:'"Vecher" means evening. "Maalai Vanakkam"',cat:'Greetings'},
+{ru:'Спокойной ночи',en:'Good night',pron:'spa-KOY-noy NO-chee',tanglish:'"Nochi" means night. "Iravu Vanakkam / Nalla thungu"',cat:'Greetings'},
+{ru:'Как дела?',en:'How are you?',pron:'kak dee-LA',tanglish:'"Kak Dela?" — Namba "Eppadi irukeenga?" maathiri',cat:'Greetings'},
+{ru:'Хорошо',en:'Good / Fine',pron:'kha-ra-SHO',tanglish:'"Kharasho" — Epavum use panra word. "Nalla irukken" = Kharasho!',cat:'Greetings'},
+{ru:'Очень хорошо',en:'Very good',pron:'O-chen kha-ra-SHO',tanglish:'"Ochen" means very. "Romba nalla iruku" = Ochen Kharasho',cat:'Greetings'},
+{ru:'Плохо',en:'Bad',pron:'PLO-kha',tanglish:'"Plokha" — "Kettadhu / Seri illai"',cat:'Greetings'},
+{ru:'Нормально',en:'OK / Normal',pron:'nor-MAL-na',tanglish:'"Normally" maathiri sound varum. "Seri dhaan" maathiri',cat:'Greetings'},
+{ru:'Да',en:'Yes',pron:'da',tanglish:'"Da" — simple! Like saying "Da!" in Tamil slang',cat:'Greetings'},
+{ru:'Нет',en:'No',pron:'nyet',tanglish:'"Nyet" — "Illai" nu solradhuku',cat:'Greetings'},
+
+// === THANK YOU / POLITE ===
+{ru:'Спасибо',en:'Thank you',pron:'spa-SEE-ba',tanglish:'"Spasiba" — "Nandri" nu sollum pothu use pannu',cat:'Polite'},
+{ru:'Большое спасибо',en:'Thank you very much',pron:'bol-SHO-ye spa-SEE-ba',tanglish:'"Bolshoye" means big/much. Romba nandri = Bolshoye Spasiba',cat:'Polite'},
+{ru:'Пожалуйста',en:'Please / You\'re welcome',pron:'pa-ZHA-loo-sta',tanglish:'"Pozhaluista" — both "Please" and "Welcome" nu meaning irukku',cat:'Polite'},
+{ru:'Извините',en:'Excuse me / Sorry',pron:'eez-vee-NEE-tye',tanglish:'Bus la kitta nillumbodhu "Excuse me" solvom, adhu "Izvinite"',cat:'Polite'},
+{ru:'Простите',en:'Forgive me / Sorry',pron:'pra-STEE-tye',tanglish:'Deep sorry sollum pothu "Prostite" use pannu',cat:'Polite'},
+{ru:'Ничего',en:'No problem / Never mind',pron:'nee-chee-VO',tanglish:'"Nichevo" — "Paravailla" nu solradhuku',cat:'Polite'},
+
+// === NUMBERS ===
+{ru:'Один',en:'One (1)',pron:'a-DEEN',tanglish:'"Odin" — one, like cricket la "1 run"',cat:'Numbers'},
+{ru:'Два',en:'Two (2)',pron:'dva',tanglish:'"Dva" — two. Short and easy!',cat:'Numbers'},
+{ru:'Три',en:'Three (3)',pron:'tree',tanglish:'"Tree" — Three! English maathiri dhaan sound varum',cat:'Numbers'},
+{ru:'Четыре',en:'Four (4)',pron:'chye-TIH-rye',tanglish:'"Chetyre" — four. "Cherry" maathiri start aaagum',cat:'Numbers'},
+{ru:'Пять',en:'Five (5)',pron:'pyat',tanglish:'"Pyat" — five. Short sound',cat:'Numbers'},
+{ru:'Шесть',en:'Six (6)',pron:'shest',tanglish:'"Shest" — six. "Chest" maathiri sound',cat:'Numbers'},
+{ru:'Семь',en:'Seven (7)',pron:'syem',tanglish:'"Syem" — seven',cat:'Numbers'},
+{ru:'Восемь',en:'Eight (8)',pron:'VO-syem',tanglish:'"Vosem" — eight',cat:'Numbers'},
+{ru:'Девять',en:'Nine (9)',pron:'DYE-vyat',tanglish:'"Devyat" — nine. "Devil" maathiri start',cat:'Numbers'},
+{ru:'Десять',en:'Ten (10)',pron:'DYE-syat',tanglish:'"Desyat" — ten',cat:'Numbers'},
+{ru:'Двадцать',en:'Twenty (20)',pron:'DVA-tsat',tanglish:'"Dvatsat" — twenty. "Dva" (2) + "tsat"',cat:'Numbers'},
+{ru:'Тридцать',en:'Thirty (30)',pron:'TREE-tsat',tanglish:'"Tritsat" — thirty. "Tri" (3) + "tsat"',cat:'Numbers'},
+{ru:'Сто',en:'Hundred (100)',pron:'sto',tanglish:'"Sto" — hundred. Very short!',cat:'Numbers'},
+{ru:'Тысяча',en:'Thousand (1000)',pron:'TIH-sya-cha',tanglish:'"Tysyacha" — thousand',cat:'Numbers'},
+
+// === FAMILY ===
+{ru:'Мама',en:'Mom',pron:'MA-ma',tanglish:'"Mama" — same as Tamil/English! Easy!',cat:'Family'},
+{ru:'Папа',en:'Dad',pron:'PA-pa',tanglish:'"Papa" — same as Tamil! Andha word dhaan!',cat:'Family'},
+{ru:'Брат',en:'Brother',pron:'brat',tanglish:'"Brat" — brother. English "brat" maathiri sound',cat:'Family'},
+{ru:'Сестра',en:'Sister',pron:'syes-TRA',tanglish:'"Sestra" — sister. "Akka/Thangachi"',cat:'Family'},
+{ru:'Бабушка',en:'Grandmother',pron:'BA-boosh-ka',tanglish:'"Babushka" — patti. Romba famous Russian word!',cat:'Family'},
+{ru:'Дедушка',en:'Grandfather',pron:'DYE-doosh-ka',tanglish:'"Dedushka" — thatha',cat:'Family'},
+{ru:'Муж',en:'Husband',pron:'moozh',tanglish:'"Muzh" — husband / kanavan',cat:'Family'},
+{ru:'Жена',en:'Wife',pron:'zhye-NA',tanglish:'"Zhena" — wife / manavatti',cat:'Family'},
+{ru:'Сын',en:'Son',pron:'sin',tanglish:'"Sin" — son / magan',cat:'Family'},
+{ru:'Дочь',en:'Daughter',pron:'doch',tanglish:'"Doch" — daughter / magal',cat:'Family'},
+{ru:'Друг',en:'Friend (male)',pron:'droog',tanglish:'"Drug" — male friend / nanban',cat:'Family'},
+{ru:'Подруга',en:'Friend (female)',pron:'pa-DROO-ga',tanglish:'"Podruga" — female friend / nanbi',cat:'Family'},
+
+// === FOOD & DRINK ===
+{ru:'Вода',en:'Water',pron:'va-DA',tanglish:'"Voda" — thanni. "Va" + "da" — easy!',cat:'Food'},
+{ru:'Хлеб',en:'Bread',pron:'khlyep',tanglish:'"Khlyeb" — bread. Soft "kh" sound varum',cat:'Food'},
+{ru:'Мясо',en:'Meat',pron:'MYA-sa',tanglish:'"Myaso" — meat / iraichi',cat:'Food'},
+{ru:'Рыба',en:'Fish',pron:'RIH-ba',tanglish:'"Ryba" — fish / meen',cat:'Food'},
+{ru:'Суп',en:'Soup',pron:'soop',tanglish:'"Sup" — soup! Same word almost',cat:'Food'},
+{ru:'Чай',en:'Tea',pron:'chay',tanglish:'"Chay" — tea! Russian "chai" = namba "chaaya"! Same root!',cat:'Food'},
+{ru:'Кофе',en:'Coffee',pron:'KO-fye',tanglish:'"Kofe" — coffee. Almost same!',cat:'Food'},
+{ru:'Молоко',en:'Milk',pron:'ma-la-KO',tanglish:'"Moloko" — milk / paal',cat:'Food'},
+{ru:'Яйцо',en:'Egg',pron:'yay-TSO',tanglish:'"Yaytso" — egg / muttai',cat:'Food'},
+{ru:'Сыр',en:'Cheese',pron:'sihr',tanglish:'"Syr" — cheese',cat:'Food'},
+{ru:'Масло',en:'Butter / Oil',pron:'MAS-la',tanglish:'"Maslo" — vennai / ennai',cat:'Food'},
+{ru:'Соль',en:'Salt',pron:'sol',tanglish:'"Sol" — uppu! Short and easy',cat:'Food'},
+{ru:'Сахар',en:'Sugar',pron:'SA-khar',tanglish:'"Sakhar" — sakkarai! Tamil word maathiri!',cat:'Food'},
+{ru:'Овощи',en:'Vegetables',pron:'O-va-shchi',tanglish:'"Ovoshchi" — kaaikari',cat:'Food'},
+{ru:'Фрукты',en:'Fruits',pron:'FROOK-tih',tanglish:'"Frukty" — pazham / fruits',cat:'Food'},
+{ru:'Рис',en:'Rice',pron:'rees',tanglish:'"Ris" — saadham / arisi',cat:'Food'},
+{ru:'Курица',en:'Chicken',pron:'KOO-ree-tsa',tanglish:'"Kuritsa" — kozhi / chicken',cat:'Food'},
+{ru:'Пиво',en:'Beer',pron:'PEE-va',tanglish:'"Pivo" — beer. Romba use panra word Russia la',cat:'Food'},
+{ru:'Вино',en:'Wine',pron:'vee-NO',tanglish:'"Vino" — wine. Same as Spanish/Italian!',cat:'Food'},
+{ru:'Ресторан',en:'Restaurant',pron:'ryes-ta-RAN',tanglish:'"Restoran" — hotel / restaurant. Same sound!',cat:'Food'},
+
+// === WORK / OFFICE ===
+{ru:'Работа',en:'Work / Job',pron:'ra-BO-ta',tanglish:'"Rabota" — velai / thozhil. "Ra-BO-ta" nu stress podu',cat:'Work'},
+{ru:'Офис',en:'Office',pron:'O-fees',tanglish:'"Ofis" — office. Same word!',cat:'Work'},
+{ru:'Встреча',en:'Meeting',pron:'VSTREE-cha',tanglish:'"Vstrecha" — meeting / koodam. "V" + "strecha"',cat:'Work'},
+{ru:'Документ',en:'Document',pron:'da-koo-MYENT',tanglish:'"Dokument" — document. Almost same!',cat:'Work'},
+{ru:'Компьютер',en:'Computer',pron:'kam-PYU-tyer',tanglish:'"Kompyuter" — computer! Same word!',cat:'Work'},
+{ru:'Телефон',en:'Telephone',pron:'tye-lye-FON',tanglish:'"Telefon" — phone. Same!',cat:'Work'},
+{ru:'Начальник',en:'Boss / Manager',pron:'na-CHAL-neek',tanglish:'"Nachalnik" — boss / mudhalali',cat:'Work'},
+{ru:'Коллега',en:'Colleague',pron:'kal-YE-ga',tanglish:'"Kollega" — velai nadban / colleague',cat:'Work'},
+{ru:'Зарплата',en:'Salary',pron:'zar-PLA-ta',tanglish:'"Zarplata" — sambalam. "Zar" = tsar (king) + "plata" = pay',cat:'Work'},
+{ru:'Проект',en:'Project',pron:'pra-YEKT',tanglish:'"Proyekt" — project. Same!',cat:'Work'},
+{ru:'Электронная почта',en:'Email',pron:'e-lyek-TRON-na-ya POCHta',tanglish:'"Email" nu solladhukku idhai use pannaalam. Pochta = post/mail',cat:'Work'},
+{ru:'Совещание',en:'Conference',pron:'sa-vye-SHCHA-nee-ye',tanglish:'"Soveshchaniye" — conference meeting',cat:'Work'},
+
+// === TRAVEL ===
+{ru:'Где',en:'Where?',pron:'gdye',tanglish:'"Gdye" — "Enge?" nu kettadhukku. Very important!',cat:'Travel'},
+{ru:'Когда',en:'When?',pron:'kag-DA',tanglish:'"Kagda" — "Eppozhudhu?" nu kettadhukku',cat:'Travel'},
+{ru:'Как',en:'How?',pron:'kak',tanglish:'"Kak" — "Eppadi?" nu kettadhukku',cat:'Travel'},
+{ru:'Сколько',en:'How much?',pron:'SKOL-ka',tanglish:'"Skolko" — "Evvalavu?" Shopping la must know!',cat:'Travel'},
+{ru:'Направо',en:'Right',pron:'na-PRA-va',tanglish:'"Napravo" — valam / right side',cat:'Travel'},
+{ru:'Налево',en:'Left',pron:'na-LYE-va',tanglish:'"Nalevo" — idam / left side',cat:'Travel'},
+{ru:'Прямо',en:'Straight ahead',pron:'PRYA-ma',tanglish:'"Pryamo" — nera ponga / straight',cat:'Travel'},
+{ru:'Метро',en:'Metro / Subway',pron:'myet-RO',tanglish:'"Metro" — metro train. Same word!',cat:'Travel'},
+{ru:'Автобус',en:'Bus',pron:'av-TO-boos',tanglish:'"Avtobus" — bus. "Auto" + "bus"!',cat:'Travel'},
+{ru:'Такси',en:'Taxi',pron:'tak-SEE',tanglish:'"Taksi" — taxi. Same!',cat:'Travel'},
+{ru:'Аэропорт',en:'Airport',pron:'a-e-ra-PORT',tanglish:'"Aeroport" — airport. Almost same!',cat:'Travel'},
+{ru:'Вокзал',en:'Train Station',pron:'vak-ZAL',tanglish:'"Vokzal" — train station / railwaystation',cat:'Travel'},
+{ru:'Гостиница',en:'Hotel',pron:'gas-TEE-nee-tsa',tanglish:'"Gostinitsa" — hotel. Sounds fancy!',cat:'Travel'},
+{ru:'Билет',en:'Ticket',pron:'bee-LYET',tanglish:'"Bilet" — ticket. Same concept!',cat:'Travel'},
+{ru:'Паспорт',en:'Passport',pron:'PAS-port',tanglish:'"Pasport" — passport. Same!',cat:'Travel'},
+{ru:'Улица',en:'Street',pron:'OO-lee-tsa',tanglish:'"Ulitsa" — theru / street',cat:'Travel'},
+{ru:'Площадь',en:'Square / Plaza',pron:'PLO-shchad',tanglish:'"Ploshchad" — like "Red Square" — Krasnaya Ploshchad',cat:'Travel'},
+{ru:'Карта',en:'Map',pron:'KAR-ta',tanglish:'"Karta" — map / nakshe',cat:'Travel'},
+
+// === BODY ===
+{ru:'Голова',en:'Head',pron:'ga-la-VA',tanglish:'"Golova" — talai / head',cat:'Body'},
+{ru:'Глаза',en:'Eyes',pron:'gla-ZA',tanglish:'"Glaza" — kangal / eyes',cat:'Body'},
+{ru:'Нос',en:'Nose',pron:'nos',tanglish:'"Nos" — mooku / nose. "Nos" = nose almost!',cat:'Body'},
+{ru:'Рот',en:'Mouth',pron:'rot',tanglish:'"Rot" — vaai / mouth',cat:'Body'},
+{ru:'Ухо',en:'Ear',pron:'OO-kha',tanglish:'"Ukho" — sevvi / ear',cat:'Body'},
+{ru:'Рука',en:'Hand / Arm',pron:'roo-KA',tanglish:'"Ruka" — kai / hand',cat:'Body'},
+{ru:'Нога',en:'Leg / Foot',pron:'na-GA',tanglish:'"Noga" — kaal / leg',cat:'Body'},
+{ru:'Спина',en:'Back',pron:'spee-NA',tanglish:'"Spina" — mughu / back',cat:'Body'},
+{ru:'Сердце',en:'Heart',pron:'SYERD-tse',tanglish:'"Serdtse" — idhayam / heart',cat:'Body'},
+{ru:'Живот',en:'Stomach / Belly',pron:'zhih-VOT',tanglish:'"Zhivot" — vayiru / stomach',cat:'Body'},
+
+// === COLORS ===
+{ru:'Красный',en:'Red',pron:'KRAS-niy',tanglish:'"Krasny" — sigappu. "Krasnaya" = Red (feminine)',cat:'Colors'},
+{ru:'Синий',en:'Blue (dark)',pron:'SEE-niy',tanglish:'"Siniy" — neela niram (dark blue)',cat:'Colors'},
+{ru:'Голубой',en:'Blue (light)',pron:'ga-loo-BOY',tanglish:'"Goluboy" — light blue / aakaasa neelam',cat:'Colors'},
+{ru:'Зелёный',en:'Green',pron:'zee-LYO-niy',tanglish:'"Zelyony" — pachai niram',cat:'Colors'},
+{ru:'Жёлтый',en:'Yellow',pron:'ZHOL-tiy',tanglish:'"Zholty" — manja niram',cat:'Colors'},
+{ru:'Белый',en:'White',pron:'BYE-liy',tanglish:'"Bely" — vellai niram',cat:'Colors'},
+{ru:'Чёрный',en:'Black',pron:'CHOR-niy',tanglish:'"Chorny" — karuppu niram',cat:'Colors'},
+{ru:'Оранжевый',en:'Orange',pron:'a-RAN-zhih-viy',tanglish:'"Oranzheviy" — naranga niram',cat:'Colors'},
+{ru:'Розовый',en:'Pink',pron:'RO-za-viy',tanglish:'"Rozovy" — roja niram / pink',cat:'Colors'},
+{ru:'Фиолетовый',en:'Purple',pron:'fee-a-LYE-ta-viy',tanglish:'"Fioletovy" — violet / aaranjam niram',cat:'Colors'},
+
+// === WEATHER ===
+{ru:'Погода',en:'Weather',pron:'pa-GO-da',tanglish:'"Pogoda" — vaanam / weather',cat:'Weather'},
+{ru:'Солнце',en:'Sun',pron:'SON-tse',tanglish:'"Solntse" — suriyan / sun. "L" silent!',cat:'Weather'},
+{ru:'Дождь',en:'Rain',pron:'dozht',tanglish:'"Dozhd" — mazhai / rain',cat:'Weather'},
+{ru:'Снег',en:'Snow',pron:'snyek',tanglish:'"Sneg" — snow / him. Russia la romba paarkalam!',cat:'Weather'},
+{ru:'Ветер',en:'Wind',pron:'VYE-tyer',tanglish:'"Veter" — katru / wind',cat:'Weather'},
+{ru:'Холодно',en:'Cold',pron:'KHO-lad-na',tanglish:'"Kholodno" — kulir / cold. Russia la ithu romba kekkanam!',cat:'Weather'},
+{ru:'Тепло',en:'Warm',pron:'tye-PLO',tanglish:'"Teplo" — vepam / warm',cat:'Weather'},
+{ru:'Жарко',en:'Hot',pron:'ZHAR-ka',tanglish:'"Zharko" — soodum / hot. Chennai summer la ithuvae!',cat:'Weather'},
+{ru:'Облачно',en:'Cloudy',pron:'OB-lach-na',tanglish:'"Oblachno" — megham / cloudy',cat:'Weather'},
+
+// === PLACES ===
+{ru:'Город',en:'City',pron:'GO-rat',tanglish:'"Gorod" — nagaram / city',cat:'Places'},
+{ru:'Страна',en:'Country',pron:'stra-NA',tanglish:'"Strana" — naadu / country',cat:'Places'},
+{ru:'Дом',en:'House / Home',pron:'dom',tanglish:'"Dom" — veedu / house. Short!',cat:'Places'},
+{ru:'Квартира',en:'Apartment',pron:'kvar-TEE-ra',tanglish:'"Kvartira" — flat / apartment',cat:'Places'},
+{ru:'Школа',en:'School',pron:'SHKO-la',tanglish:'"Shkola" — palli / school',cat:'Places'},
+{ru:'Университет',en:'University',pron:'oo-nee-vyer-see-TYET',tanglish:'"Universitet" — university. Same!',cat:'Places'},
+{ru:'Больница',en:'Hospital',pron:'bol-NEE-tsa',tanglish:'"Bolnitsa" — aaspathiri / hospital',cat:'Places'},
+{ru:'Аптека',en:'Pharmacy',pron:'ap-TYE-ka',tanglish:'"Apteka" — marundhagam / pharmacy',cat:'Places'},
+{ru:'Магазин',en:'Shop / Store',pron:'ma-ga-ZEEN',tanglish:'"Magazin" — kadai / shop. "Magazine" maathiri!',cat:'Places'},
+{ru:'Банк',en:'Bank',pron:'bank',tanglish:'"Bank" — bank! Same!',cat:'Places'},
+{ru:'Парк',en:'Park',pron:'park',tanglish:'"Park" — park! Same!',cat:'Places'},
+{ru:'Музей',en:'Museum',pron:'moo-ZYEY',tanglish:'"Muzey" — museum',cat:'Places'},
+{ru:'Театр',en:'Theatre',pron:'tye-ATR',tanglish:'"Teatr" — naadagasaalai / theatre. Same!',cat:'Places'},
+{ru:'Рынок',en:'Market',pron:'RIH-nak',tanglish:'"Rynok" — sandhai / market',cat:'Places'},
+
+// === TIME ===
+{ru:'Сегодня',en:'Today',pron:'sye-VOD-nya',tanglish:'"Segodnya" — indru / today',cat:'Time'},
+{ru:'Завтра',en:'Tomorrow',pron:'ZAV-tra',tanglish:'"Zavtra" — naalai / tomorrow',cat:'Time'},
+{ru:'Вчера',en:'Yesterday',pron:'vchye-RA',tanglish:'"Vchera" — nettru / yesterday',cat:'Time'},
+{ru:'Сейчас',en:'Now',pron:'syey-CHAS',tanglish:'"Seychas" — ippozhudhu / now',cat:'Time'},
+{ru:'Утро',en:'Morning',pron:'OO-tra',tanglish:'"Utro" — kaalai / morning',cat:'Time'},
+{ru:'День',en:'Day',pron:'dyen',tanglish:'"Den" — pkal / day',cat:'Time'},
+{ru:'Вечер',en:'Evening',pron:'VYE-cher',tanglish:'"Vecher" — maalai / evening',cat:'Time'},
+{ru:'Ночь',en:'Night',pron:'noch',tanglish:'"Noch" — iravu / night',cat:'Time'},
+{ru:'Неделя',en:'Week',pron:'nye-DYE-lya',tanglish:'"Nedelya" — vaaram / week',cat:'Time'},
+{ru:'Месяц',en:'Month',pron:'MYE-syats',tanglish:'"Mesyats" — maadham / month',cat:'Time'},
+{ru:'Год',en:'Year',pron:'got',tanglish:'"God" — varusham / year. "God" maathiri pronounce!',cat:'Time'},
+{ru:'Час',en:'Hour',pron:'chas',tanglish:'"Chas" — mani / hour',cat:'Time'},
+{ru:'Минута',en:'Minute',pron:'mee-NOO-ta',tanglish:'"Minuta" — nimisham / minute. Same!',cat:'Time'},
+
+// === EMOTIONS ===
+{ru:'Счастливый',en:'Happy',pron:'schast-LEE-viy',tanglish:'"Schastlivy" — sandhosham / happy',cat:'Emotions'},
+{ru:'Грустный',en:'Sad',pron:'GRUST-niy',tanglish:'"Grustny" — dhukkam / sad',cat:'Emotions'},
+{ru:'Злой',en:'Angry',pron:'zloy',tanglish:'"Zloy" — kopam / angry',cat:'Emotions'},
+{ru:'Усталый',en:'Tired',pron:'oos-TA-liy',tanglish:'"Ustaly" — thalarchi / tired',cat:'Emotions'},
+{ru:'Голодный',en:'Hungry',pron:'ga-LOD-niy',tanglish:'"Golodny" — paasikku / hungry',cat:'Emotions'},
+{ru:'Больной',en:'Sick / Ill',pron:'bol-NOY',tanglish:'"Bolnoy" — unwell / nala illai',cat:'Emotions'},
+{ru:'Красивый',en:'Beautiful',pron:'kra-SEE-viy',tanglish:'"Krasiviy" — azhagana. Russia la "Krasivo!" nu solli pradisingaalam',cat:'Emotions'},
+{ru:'Умный',en:'Smart / Intelligent',pron:'OOM-niy',tanglish:'"Umny" — medi / smart',cat:'Emotions'},
+{ru:'Большой',en:'Big / Large',pron:'bol-SHOY',tanglish:'"Bolshoy" — periya. Bolshoi Theatre famous aagum!',cat:'Emotions'},
+{ru:'Маленький',en:'Small / Little',pron:'MA-lyen-kiy',tanglish:'"Malenky" — sinna / small',cat:'Emotions'},
+{ru:'Быстро',en:'Fast / Quickly',pron:'BIS-tra',tanglish:'"Bystro" — vegamaaga. Like restaurant "Bistro" — came from Russian!',cat:'Emotions'},
+{ru:'Медленно',en:'Slowly',pron:'MYED-lyen-na',tanglish:'"Medlenno" — mella / slowly',cat:'Emotions'},
+
+// === VERBS ===
+{ru:'Говорить',en:'To speak',pron:'ga-va-REET',tanglish:'"Govorit" — pesuradhu. "Ya govoryu" = I speak',cat:'Verbs'},
+{ru:'Понимать',en:'To understand',pron:'pa-nee-MAT',tanglish:'"Ponimat" — purindhuganum. "Ya ponimayu" = I understand',cat:'Verbs'},
+{ru:'Знать',en:'To know',pron:'znat',tanglish:'"Znat" — therinjirukku. "Ya znayu" = I know',cat:'Verbs'},
+{ru:'Хотеть',en:'To want',pron:'kha-TYET',tanglish:'"Khotet" — vendum. "Ya khochu" = I want',cat:'Verbs'},
+{ru:'Любить',en:'To love / like',pron:'lyoo-BEET',tanglish:'"Lyubit" — virumbugiren / kaadhalikkiren. "Ya tebya lyublyu" = I love you!',cat:'Verbs'},
+{ru:'Идти',en:'To go (walking)',pron:'eed-TEE',tanglish:'"Idti" — nada poga. "Ya idu" = I am going',cat:'Verbs'},
+{ru:'Ехать',en:'To go (by vehicle)',pron:'YE-khat',tanglish:'"Yekhat" — vaahanaththil poga',cat:'Verbs'},
+{ru:'Есть',en:'To eat / There is',pron:'yest',tanglish:'"Yest" — saapida / irukkum (two meanings!)',cat:'Verbs'},
+{ru:'Пить',en:'To drink',pron:'peet',tanglish:'"Pit" — kudikka. "Ya khochu pit" = I want to drink',cat:'Verbs'},
+{ru:'Спать',en:'To sleep',pron:'spat',tanglish:'"Spat" — thungu. "Ya khochu spat" = I want to sleep',cat:'Verbs'},
+{ru:'Работать',en:'To work',pron:'ra-BO-tat',tanglish:'"Rabotat" — velai pannuradhu',cat:'Verbs'},
+{ru:'Купить',en:'To buy',pron:'koo-PEET',tanglish:'"Kupit" — vaangu. Shopping la "Ya khochu kupit" = I want to buy',cat:'Verbs'},
+{ru:'Помочь',en:'To help',pron:'pa-MOCH',tanglish:'"Pomoch" — udhavi pannu. "Pomogite!" = Help me!',cat:'Verbs'},
+{ru:'Видеть',en:'To see',pron:'VEE-dyet',tanglish:'"Videt" — paaruradhu',cat:'Verbs'},
+{ru:'Слышать',en:'To hear',pron:'SLIH-shat',tanglish:'"Slyshat" — kekkuradhu',cat:'Verbs'},
+
+// === USEFUL PHRASES ===
+{ru:'Я не понимаю',en:'I don\'t understand',pron:'ya nye pa-nee-MA-yu',tanglish:'"Ya ne ponimayu" — enakku puriyalai. Russia la must-know phrase!',cat:'Phrases'},
+{ru:'Повторите',en:'Please repeat',pron:'pav-ta-REE-tye',tanglish:'"Povtorite" — thirumba sollunga. Class la teacherkitta kelkka',cat:'Phrases'},
+{ru:'Говорите медленно',en:'Speak slowly',pron:'ga-va-REE-tye MYED-lyen-na',tanglish:'"Govorite medlenno" — mella pesunga plz!',cat:'Phrases'},
+{ru:'Как вас зовут?',en:'What\'s your name?',pron:'kak vas za-VOOT',tanglish:'"Kak vas zovut?" — Ungal peyar enna?',cat:'Phrases'},
+{ru:'Меня зовут',en:'My name is...',pron:'mye-NYA za-VOOT',tanglish:'"Menya zovut ___" — Enna peyar ___. After this say your name!',cat:'Phrases'},
+{ru:'Сколько стоит?',en:'How much does it cost?',pron:'SKOL-ka STO-eet',tanglish:'"Skolko stoit?" — Idhu evvalavu? Shopping essential!',cat:'Phrases'},
+{ru:'Помогите!',en:'Help!',pron:'pa-ma-GEE-tye',tanglish:'"Pomogite!" — Udhavi pangu! Emergency word!',cat:'Phrases'},
+{ru:'Где туалет?',en:'Where is the toilet?',pron:'gdye too-a-LYET',tanglish:'"Gde tualet?" — Bathroom enge? Travel la romba kaaval!',cat:'Phrases'},
+{ru:'Я не говорю по-русски',en:'I don\'t speak Russian',pron:'ya nye ga-va-RYOO pa-ROOS-kee',tanglish:'"Ya ne govoryu po-russki" — Enakku Russian theriyaadhu nu sollu',cat:'Phrases'},
+{ru:'Вы говорите по-английски?',en:'Do you speak English?',pron:'vih ga-va-REE-tye pa-an-GLEES-kee',tanglish:'"Vy govorite po-angliyski?" — Inglichla pesuveengala?',cat:'Phrases'},
+
+// === TECHNOLOGY ===
+{ru:'Интернет',en:'Internet',pron:'een-ter-NYET',tanglish:'"Internet" — same word!',cat:'Tech'},
+{ru:'Сайт',en:'Website',pron:'sayt',tanglish:'"Sayt" — website',cat:'Tech'},
+{ru:'Приложение',en:'App / Application',pron:'pree-la-ZHE-nee-ye',tanglish:'"Prilozhenie" — app. Intha app maari!',cat:'Tech'},
+{ru:'Зарядка',en:'Charger',pron:'za-RYAD-ka',tanglish:'"Zaryadka" — charger. Phone dead aaguthu nu Russia la ithai kelu',cat:'Tech'},
+{ru:'Пароль',en:'Password',pron:'pa-ROL',tanglish:'"Parol" — password. "Parole" maathiri',cat:'Tech'},
+{ru:'Камера',en:'Camera',pron:'KA-mye-ra',tanglish:'"Kamera" — camera. Same!',cat:'Tech'},
+{ru:'Экран',en:'Screen',pron:'ek-RAN',tanglish:'"Ekran" — screen / thirai',cat:'Tech'},
+{ru:'Клавиатура',en:'Keyboard',pron:'kla-vee-a-TOO-ra',tanglish:'"Klaviatura" — keyboard',cat:'Tech'},
+
+// === HEALTH ===
+{ru:'Врач',en:'Doctor',pron:'vrach',tanglish:'"Vrach" — doctor / vaidyar',cat:'Health'},
+{ru:'Больно',en:'It hurts / Pain',pron:'BOL-na',tanglish:'"Bolno" — valikku / pain. "Mne bolno" = It hurts me',cat:'Health'},
+{ru:'Лекарство',en:'Medicine',pron:'lye-KARS-tva',tanglish:'"Lekarstvo" — marundu / medicine',cat:'Health'},
+{ru:'Температура',en:'Temperature / Fever',pron:'tyen-pye-ra-TOO-ra',tanglish:'"Temperatura" — fever / temperature. Same!',cat:'Health'},
+{ru:'Аллергия',en:'Allergy',pron:'a-LYER-gee-ya',tanglish:'"Allergiya" — allergy. Same!',cat:'Health'},
+
+// === SHOPPING ===
+{ru:'Дорого',en:'Expensive',pron:'DO-ra-ga',tanglish:'"Dorogo" — vily adikku / expensive',cat:'Shopping'},
+{ru:'Дёшево',en:'Cheap / Inexpensive',pron:'DYO-shye-va',tanglish:'"Deshevo" — meli vily / cheap',cat:'Shopping'},
+{ru:'Скидка',en:'Discount',pron:'SKEET-ka',tanglish:'"Skidka" — thallu / discount. Shopping la ask pannu!',cat:'Shopping'},
+{ru:'Касса',en:'Cash register / Checkout',pron:'KAS-sa',tanglish:'"Kassa" — bill counter / kassa',cat:'Shopping'},
+{ru:'Чек',en:'Receipt',pron:'chyek',tanglish:'"Chek" — bill / receipt',cat:'Shopping'},
+{ru:'Наличные',en:'Cash',pron:'na-LEECH-nih-ye',tanglish:'"Nalichnye" — cash / kaasum',cat:'Shopping'},
+{ru:'Карта',en:'Card (payment)',pron:'KAR-ta',tanglish:'"Karta" — card. Also means map!',cat:'Shopping'},
+
+// === DAYS ===
+{ru:'Понедельник',en:'Monday',pron:'pa-nye-DYEL-neek',tanglish:'"Ponedelnik" — Thingamai',cat:'Days'},
+{ru:'Вторник',en:'Tuesday',pron:'FTOR-neek',tanglish:'"Vtornik" — Sevvaai',cat:'Days'},
+{ru:'Среда',en:'Wednesday',pron:'srye-DA',tanglish:'"Sreda" — Budhan',cat:'Days'},
+{ru:'Четверг',en:'Thursday',pron:'chyet-VYERK',tanglish:'"Chetverg" — Viyaazhan',cat:'Days'},
+{ru:'Пятница',en:'Friday',pron:'PYAT-nee-tsa',tanglish:'"Pyatnitsa" — Velli (yeeeah!)',cat:'Days'},
+{ru:'Суббота',en:'Saturday',pron:'soo-BO-ta',tanglish:'"Subbota" — Sani',cat:'Days'},
+{ru:'Воскресенье',en:'Sunday',pron:'vas-krye-SYE-nye',tanglish:'"Voskresenye" — Nayiru (rest day!)',cat:'Days'},
+];
+
+// ============================================================
+// STATE
+// ============================================================
+let S = {
+  xp:0, streak:1, hearts:5, wordsLearned:new Set(), wordsToday:0,
+  lessonsCompleted:0, totalCorrect:0, totalQ:0, practiceCount:0,
+  achievements:{}, lastDate: new Date().toDateString(),
+  wordPool: [...Array(WORDS.length).keys()], usedToday: [],
+};
+
+function loadS(){
+  const d = localStorage.getItem('rpro2_v2');
+  if(d){
+    try{
+      const p = JSON.parse(d);
+      S.xp = p.xp||0; S.streak = p.streak||1; S.hearts = p.hearts||5;
+      S.wordsLearned = new Set(p.wordsLearned||[]);
+      S.wordsToday = p.wordsToday||0; S.lessonsCompleted = p.lessonsCompleted||0;
+      S.totalCorrect = p.totalCorrect||0; S.totalQ = p.totalQ||0;
+      S.practiceCount = p.practiceCount||0; S.achievements = p.achievements||{};
+      S.lastDate = p.lastDate||new Date().toDateString();
+      S.usedToday = p.usedToday||[];
+      // Reset daily progress if new day
+      if(S.lastDate !== new Date().toDateString()){
+        S.wordsToday=0; S.usedToday=[]; S.lastDate=new Date().toDateString();
+        S.hearts=5;
+      }
+    }catch(e){}
+  }
+}
+
+function saveS(){
+  localStorage.setItem('rpro2_v2', JSON.stringify({
+    ...S, wordsLearned:[...S.wordsLearned]
+  }));
+}
+
+// ============================================================
+// SPEECH
+// ============================================================
+function speak(text, lang='ru-RU'){
+  if(!('speechSynthesis' in window)) return;
+  speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = lang; u.rate = 0.8; u.pitch = 1;
+  speechSynthesis.speak(u);
+}
+
+// ============================================================
+// UI HELPERS
+// ============================================================
+function toast(msg, type=''){
+  const t = document.getElementById('toast');
+  t.textContent=msg; t.className='toast show '+(type?type:'');
+  clearTimeout(t._t); t._t=setTimeout(()=>{t.className='toast';},2200);
+}
+
+function xpPopup(amount, el){
+  const p = document.createElement('div');
+  p.className='xp-popup'; p.textContent='+'+amount+' XP';
+  if(el){const r=el.getBoundingClientRect(); p.style.left=(r.left+r.width/2-20)+'px'; p.style.top=(r.top-20)+'px';}
+  else{p.style.left='50%'; p.style.top='100px'; p.style.transform='translateX(-50%)';}
+  document.body.appendChild(p);
+  setTimeout(()=>p.remove(),1300);
+}
+
+function confetti(){
+  const box=document.getElementById('confetti-box');
+  box.innerHTML='';
+  const cols=['#FFD700','#FF6B6B','#58CC02','#1CB0F6','#CE82FF','#FF86D0','#1FE0D0'];
+  for(let i=0;i<50;i++){
+    const c=document.createElement('div'); c.className='conf';
+    c.style.left=Math.random()*100+'vw';
+    c.style.background=cols[i%cols.length];
+    c.style.animationDelay=Math.random()*1.5+'s';
+    c.style.animationDuration=(2+Math.random()*2)+'s';
+    box.appendChild(c);
+  }
+  setTimeout(()=>box.innerHTML='',5000);
+}
+
+function addXP(n, el){
+  S.xp+=n; xpPopup(n,el); updateHeader(); updateProfile(); saveS();
+  const lvl=Math.floor(S.xp/200)+1;
+  if(lvl>=5) unlock('level5');
+  if(S.xp>=100) unlock('xp100');
+}
+
+function updateHeader(){
+  document.getElementById('hXP').textContent=S.xp;
+  document.getElementById('hStreak').textContent=S.streak;
+  document.getElementById('hHearts').textContent=S.hearts;
+}
+
+function updateProfile(){
+  document.getElementById('xpLabel').textContent=S.xp+' XP';
+  const lvl=Math.floor(S.xp/200)+1;
+  const pct=(S.xp%200)/2;
+  document.getElementById('xpFill').style.width=pct+'%';
+  document.getElementById('xpNext').textContent=(200-(S.xp%200))+' to next';
+  const lvls=['Beginner','Elementary','Pre-Intermediate','Intermediate','Advanced','Expert'];
+  document.getElementById('profileLevel').textContent='Level '+lvl+' — '+(lvls[Math.min(lvl-1,5)]);
+  document.getElementById('pr-words').textContent=S.wordsLearned.size;
+  document.getElementById('pr-streak').textContent=S.streak;
+  document.getElementById('pr-lessons').textContent=S.lessonsCompleted;
+  const acc = S.totalQ>0?Math.round((S.totalCorrect/S.totalQ)*100):0;
+  document.getElementById('ps-accuracy').textContent=acc+'%';
+  document.getElementById('ps-sessions').textContent=S.practiceCount;
+}
+
+// ============================================================
+// NAVIGATION
+// ============================================================
+function goTo(sc){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.nb').forEach(b=>b.classList.remove('active'));
+  document.getElementById('sc-'+sc).classList.add('active');
+  document.getElementById('nb-'+sc).classList.add('active');
+  if(sc==='words') renderWordsList();
+  if(sc==='profile'){updateProfile(); renderAchievements();}
+  if(sc==='practice') renderPracticeTip();
+}
+
+// ============================================================
+// HOME — LESSON PATH
+// ============================================================
+const UNITS = [
+  {icon:'👋',title:'Greetings & Basics',desc:'Say hello in Russian!',cat:'Greetings',color:'--green'},
+  {icon:'🔢',title:'Numbers',desc:'Count 1 to 1000',cat:'Numbers',color:'--blue'},
+  {icon:'👨‍👩‍👧',title:'Family',desc:'Talk about family',cat:'Family',color:'--purple'},
+  {icon:'🍽️',title:'Food & Drink',desc:'Order food in Russian',cat:'Food',color:'--orange'},
+  {icon:'💼',title:'Work & Office',desc:'Workplace vocabulary',cat:'Work',color:'--gold'},
+  {icon:'✈️',title:'Travel',desc:'Navigate Russia',cat:'Travel',color:'--teal'},
+  {icon:'🎨',title:'Colors',desc:'All the colors',cat:'Colors',color:'--pink'},
+  {icon:'⏰',title:'Time & Days',desc:'Tell time in Russian',cat:'Time',color:'--red'},
+  {icon:'💪',title:'Body & Health',desc:'Body parts & health',cat:'Health',color:'--green'},
+  {icon:'🗣️',title:'Key Phrases',desc:'Essential sentences',cat:'Phrases',color:'--blue'},
+  {icon:'🛒',title:'Shopping',desc:'Shop in Russia',cat:'Shopping',color:'--orange'},
+  {icon:'🌤️',title:'Weather',desc:'Talk about weather',cat:'Weather',color:'--teal'},
+  {icon:'😊',title:'Emotions',desc:'Express yourself',cat:'Emotions',color:'--purple'},
+  {icon:'💻',title:'Technology',desc:'Tech vocabulary',cat:'Tech',color:'--gold'},
+  {icon:'⚡',title:'Action Verbs',desc:'Do things in Russian',cat:'Verbs',color:'--red'},
+];
+
+function buildLessonPath(){
+  const path = document.getElementById('lessonPath');
+  let html='';
+  UNITS.forEach((u,i)=>{
+    const done = S.achievements['unit_'+i];
+    const active = !done && (i===0 || S.achievements['unit_'+(i-1)]);
+    const locked = !done && !active;
+    html+=`<div class="unit-header">
+      <div class="unit-icon">${u.icon}</div>
+      <div class="unit-info"><h3>${u.title}</h3><p>${u.desc}</p></div>
+    </div>`;
+    const offset = [0,1,2,1,0,-1,-2,-1,0,1];
+    const nodes=[...Array(5)].map((_,ni)=>{
+      const nd_done = done;
+      const nd_active = active && ni===0;
+      const nd_locked = locked || (!nd_done && !nd_active && ni>0);
+      const cls = nd_done?'ln-done':nd_active?'ln-active':'ln-locked';
+      const click = (nd_done||nd_active)?`startUnit(${i},${ni})`:'';
+      const crown = nd_done&&ni===4?'<span class="ln-crown">👑</span>':'';
+      return `<div class="lesson-node ${cls}" ${click?`onclick="${click}"`:''}>${crown}${nd_done?'✓':nd_active?u.icon:'🔒'}</div>`;
+    });
+    const rows=[[nodes[0],nodes[1]],[nodes[2]],[nodes[3],nodes[4]]];
+    rows.forEach(r=>{html+=`<div class="lesson-row">${r.join('')}</div>`;});
+    html+='<div style="height:8px;"></div>';
+  });
+  path.innerHTML=html;
+}
+
+function startUnit(unitIdx, nodeIdx){
+  currentUnit = unitIdx;
+  const cat = UNITS[unitIdx].cat;
+  const catWords = WORDS.filter(w=>w.cat===cat);
+  startLesson(catWords, unitIdx);
+}
+
+// ============================================================
+// LESSON ENGINE
+// ============================================================
+let lessonWords=[], lessonIdx=0, lessonCorrect=0, lessonHearts=3;
+let qType='', qWord=null, qAnswered=false;
+let currentUnit=-1, practiceMode='';
+
+const Q_TYPES = ['mcq_en','mcq_ru','listen','speak','type','builder'];
+
+function startLesson(words, unitIdx){
+  lessonWords = words.sort(()=>Math.random()-0.5).slice(0,10);
+  lessonIdx=0; lessonCorrect=0; lessonHearts=3; qAnswered=false;
+  currentUnit=unitIdx;
+  document.getElementById('lesson-screen').classList.add('open');
+  updateLessonHeader();
+  showNextQ();
+}
+
+function updateLessonHeader(){
+  const pct = Math.round((lessonIdx/lessonWords.length)*100);
+  document.getElementById('lsProg').style.width=pct+'%';
+  let h='';
+  for(let i=0;i<3;i++) h+=`<span class="heart-icon${i>=lessonHearts?' lost':''}">❤️</span>`;
+  document.getElementById('lsHearts').innerHTML=h;
+}
+
+function showNextQ(){
+  if(lessonIdx>=lessonWords.length){ showLessonResult(); return; }
+  qAnswered=false;
+  hideFeedback();
+  qWord = lessonWords[lessonIdx];
+  // Rotate question types
+  const types=['mcq_en','listen','speak','type','mcq_ru','builder'];
+  qType = types[lessonIdx % types.length];
+  // Check browser support
+  if(qType==='speak' && !('SpeechRecognition' in window||'webkitSpeechRecognition' in window)) qType='type';
+  renderQuestion();
+}
+
+function renderQuestion(){
+  const body=document.getElementById('lsBody');
+  const footer=document.getElementById('lsFooter');
+  footer.innerHTML='';
+  const w=qWord;
+
+  if(qType==='mcq_en'){
+    // Show Russian, pick English meaning
+    const others=WORDS.filter(x=>x.en!==w.en).sort(()=>Math.random()-0.5).slice(0,3);
+    const opts=[...others.map(o=>o.en),w.en].sort(()=>Math.random()-0.5);
+    body.innerHTML=`
+      <div class="q-type-label">Choose the meaning</div>
+      <div class="q-tanglish">💡 ${w.tanglish}</div>
+      <div class="big-word" onclick="speak('${esc(w.ru)}')">${w.ru}</div>
+      <div style="text-align:center;font-size:13px;color:var(--muted);margin-bottom:16px;">${w.pron}</div>
+      <div class="options-grid" id="opts">
+        ${opts.map(o=>`<button class="opt" onclick="checkMCQ(this,'${esc(o)}','${esc(w.en)}')">${o}</button>`).join('')}
+      </div>
+    `;
+    speak(w.ru);
+  } else if(qType==='mcq_ru'){
+    // Show English, pick Russian
+    const others=WORDS.filter(x=>x.ru!==w.ru).sort(()=>Math.random()-0.5).slice(0,3);
+    const opts=[...others.map(o=>o.ru),w.ru].sort(()=>Math.random()-0.5);
+    body.innerHTML=`
+      <div class="q-type-label">Select the Russian word</div>
+      <div class="q-question">${w.en}</div>
+      <div class="q-tanglish">💡 ${w.tanglish}</div>
+      <div class="opt-list" id="opts">
+        ${opts.map(o=>`<button class="opt" onclick="checkMCQ(this,'${esc(o)}','${esc(w.ru)}')">
+          <div><div class="opt-ru">${o}</div></div>
+        </button>`).join('')}
+      </div>
+    `;
+  } else if(qType==='listen'){
+    body.innerHTML=`
+      <div class="q-type-label">👂 Tap & Listen, then choose</div>
+      <button class="listen-btn" onclick="speak('${esc(w.ru)}')">🔊</button>
+      <div style="text-align:center;color:var(--muted);font-size:13px;margin-bottom:20px;">Tap to hear the word</div>
+      <div class="q-tanglish">💡 ${w.tanglish}</div>
+      <div class="options-grid" id="opts">
+        ${[w.en,...WORDS.filter(x=>x.en!==w.en).sort(()=>Math.random()-0.5).slice(0,3)].sort(()=>Math.random()-0.5)
+          .map(o=>`<button class="opt" onclick="checkMCQ(this,'${esc(o)}','${esc(w.en)}')">${o}</button>`).join('')}
+      </div>
+    `;
+    speak(w.ru);
+  } else if(qType==='speak'){
+    body.innerHTML=`
+      <div class="q-type-label">🎤 Say this in Russian</div>
+      <div class="q-question">${w.en}</div>
+      <div class="q-tanglish">💡 ${w.tanglish}</div>
+      <div class="speak-area">
+        <div class="speak-tip">Say: <strong>${w.ru}</strong> (${w.pron})</div>
+        <button class="listen-btn" onclick="speak('${esc(w.ru)}')" style="margin-bottom:12px;">🔊</button>
+        <button class="mic-btn" id="micBtn" onclick="startSpeech()">🎤</button>
+        <div class="speak-tip" id="speakStatus">Tap mic & speak Russian</div>
+        <div class="speak-result" id="speakResult"></div>
+      </div>
+    `;
+    footer.innerHTML=`<button class="btn btn-ghost" onclick="skipSpeak()">Skip for now</button>`;
+  } else if(qType==='type'){
+    body.innerHTML=`
+      <div class="q-type-label">✍️ Type the English meaning</div>
+      <div class="big-word" onclick="speak('${esc(w.ru)}')">${w.ru}</div>
+      <div style="text-align:center;font-size:13px;color:var(--muted);margin-bottom:8px;">${w.pron}</div>
+      <div class="q-tanglish">💡 ${w.tanglish}</div>
+      <input class="type-input" id="typeIn" placeholder="Type English meaning..." 
+        onkeydown="if(event.key==='Enter') checkType()">
+    `;
+    footer.innerHTML=`<button class="btn btn-green" onclick="checkType()">Check ✓</button>`;
+    setTimeout(()=>{const i=document.getElementById('typeIn'); if(i) i.focus();},300);
+    speak(w.ru);
+  } else if(qType==='builder'){
+    // Arrange words to form translation
+    const words2 = w.en.split(' ');
+    const extra = ['is','the','a','and','not','my','you'].filter(x=>!words2.includes(x)).slice(0,3);
+    const all=[...words2,...extra].sort(()=>Math.random()-0.5);
+    let selected=[];
+    body.innerHTML=`
+      <div class="q-type-label">🧩 Build the sentence</div>
+      <div class="big-word" onclick="speak('${esc(w.ru)}')">${w.ru}</div>
+      <div class="q-tanglish">💡 ${w.tanglish}</div>
+      <div class="selected-chips" id="selChips"></div>
+      <div class="word-bank" id="wordBank">
+        ${all.map((wd,i)=>`<button class="word-chip" id="chip${i}" onclick="addChip('${esc(wd)}',${i})">${wd}</button>`).join('')}
+      </div>
+    `;
+    footer.innerHTML=`
+      <button class="btn btn-ghost" onclick="clearChips()">Clear</button>
+      <button class="btn btn-green" onclick="checkBuilder('${esc(w.en)}')">Check ✓</button>
+    `;
+  }
+  updateLessonHeader();
+}
+
+function esc(s){ return (s||'').replace(/'/g,"\\'").replace(/"/g,'&quot;'); }
+
+// MCQ
+function checkMCQ(btn, selected, correct){
+  if(qAnswered) return; qAnswered=true;
+  document.querySelectorAll('.opt').forEach(b=>b.onclick=null);
+  if(selected===correct){
+    btn.classList.add('correct'); markCorrect();
+  } else {
+    btn.classList.add('wrong');
+    document.querySelectorAll('.opt').forEach(b=>{ if(b.textContent.trim()===correct) b.classList.add('correct');});
+    markWrong();
+  }
+}
+
+// Type
+function checkType(){
+  if(qAnswered) return;
+  const inp=document.getElementById('typeIn');
+  if(!inp) return;
+  const val=inp.value.trim().toLowerCase();
+  const correct=qWord.en.toLowerCase();
+  qAnswered=true; inp.readOnly=true;
+  if(val===correct || correct.includes(val) && val.length>2){
+    inp.classList.add('correct'); markCorrect();
+  } else {
+    inp.classList.add('wrong'); markWrong();
+  }
+}
+
+// Builder
+let selectedChips=[], usedChipIds=[];
+function addChip(word, idx){
+  selectedChips.push(word); usedChipIds.push(idx);
+  document.getElementById('chip'+idx).classList.add('used');
+  const sc=document.getElementById('selChips');
+  sc.innerHTML=selectedChips.map((w,i)=>`<button class="sel-chip" onclick="removeChip(${i})">${w}</button>`).join('');
+}
+function removeChip(i){
+  const chipId=usedChipIds[i];
+  document.getElementById('chip'+chipId).classList.remove('used');
+  selectedChips.splice(i,1); usedChipIds.splice(i,1);
+  const sc=document.getElementById('selChips');
+  sc.innerHTML=selectedChips.map((w,i)=>`<button class="sel-chip" onclick="removeChip(${i})">${w}</button>`).join('');
+}
+function clearChips(){
+  selectedChips=[]; usedChipIds=[];
+  document.querySelectorAll('.word-chip').forEach(c=>c.classList.remove('used'));
+  document.getElementById('selChips').innerHTML='';
+}
+function checkBuilder(correct){
+  if(qAnswered) return; qAnswered=true;
+  const ans=selectedChips.join(' ').toLowerCase();
+  const cor=correct.toLowerCase();
+  if(ans===cor || cor.includes(ans) && ans.length>2) markCorrect();
+  else markWrong();
+}
+
+// Speech
+let recognition=null;
+function startSpeech(){
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  if(!SR){ toast('Speech not supported — try Chrome/Edge','red'); skipSpeak(); return; }
+  const btn=document.getElementById('micBtn');
+  const status=document.getElementById('speakStatus');
+  if(recognition){ recognition.stop(); return; }
+  recognition=new SR();
+  recognition.lang='ru-RU'; recognition.interimResults=false;
+  recognition.onstart=()=>{ btn.classList.add('recording'); status.textContent='🔴 Listening...'; };
+  recognition.onresult=(e)=>{
+    const said=e.results[0][0].transcript.toLowerCase();
+    const target=qWord.ru.toLowerCase();
+    recognition=null; btn.classList.remove('recording');
+    if(qAnswered) return; qAnswered=true;
+    const res=document.getElementById('speakResult');
+    if(said.includes(target.slice(0,3))||target.includes(said.slice(0,3))){
+      res.textContent='✅ Heard: "'+e.results[0][0].transcript+'" — Correct!';
+      res.className='speak-result ok'; markCorrect();
+    } else {
+      res.textContent='❌ Heard: "'+e.results[0][0].transcript+'" — Try: '+qWord.ru;
+      res.className='speak-result fail'; markWrong();
+    }
+  };
+  recognition.onerror=()=>{ recognition=null; btn.classList.remove('recording'); status.textContent='Tap mic & speak Russian'; };
+  recognition.onend=()=>{ recognition=null; btn.classList.remove('recording'); };
+  recognition.start();
+}
+function skipSpeak(){ if(qAnswered) return; qAnswered=true; markCorrect(); }
+
+// Feedback
+function markCorrect(){
+  S.totalCorrect++; S.totalQ++; lessonCorrect++;
+  addXP(10);
+  const w=qWord;
+  S.wordsLearned.add(w.ru);
+  if(!S.usedToday.includes(w.ru)){ S.usedToday.push(w.ru); S.wordsToday++; }
+  updateDailyProgress();
+  speak(w.ru);
+  showFeedback(true, '✅ Correct!', w.en+' = '+w.ru);
+  checkAchievements();
+  saveS();
+}
+
+function markWrong(){
+  S.totalQ++; lessonHearts--;
+  updateLessonHeader();
+  if(S.hearts>0) S.hearts--;
+  updateHeader();
+  showFeedback(false, '❌ Incorrect', 'Answer: '+qWord.en+' ('+qWord.ru+')');
+  if(lessonHearts<=0){ setTimeout(()=>{ closeLessonScreen(); toast('Practice more and try again! 💪','red'); },1500); }
+  saveS();
+}
+
+function showFeedback(ok, title, sub){
+  const bar=document.getElementById('feedbackBar');
+  document.getElementById('fbTitle').textContent=title;
+  document.getElementById('fbSub').textContent=sub;
+  const btn=document.getElementById('fbBtn');
+  btn.textContent= lessonIdx+1>=lessonWords.length ? 'Finish 🎉' : 'Continue →';
+  btn.className='btn '+(ok?'btn-green':'btn-red');
+  bar.className='feedback-bar show '+(ok?'fb-correct':'fb-wrong');
+}
+
+function hideFeedback(){
+  document.getElementById('feedbackBar').className='feedback-bar';
+}
+
+function nextQuestion(){
+  if(qAnswered) lessonIdx++;
+  hideFeedback();
+  showNextQ();
+}
+
+function showLessonResult(){
+  document.getElementById('lesson-screen').classList.remove('open');
+  hideFeedback();
+  const pct=Math.round((lessonCorrect/lessonWords.length)*100);
+  const won=pct>=70;
+  if(won){
+    confetti();
+    S.lessonsCompleted++;
+    if(currentUnit>=0) unlock('unit_'+currentUnit);
+    buildLessonPath();
+  }
+  const modal=document.createElement('div');
+  modal.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,0.8);z-index:400;display:flex;align-items:center;justify-content:center;padding:24px;';
+  modal.innerHTML=`<div style="background:var(--bg2);border:1px solid var(--border);border-radius:24px;padding:32px 24px;max-width:340px;width:100%;text-align:center;">
+    <div class="result-emoji">${won?'🎉':'😅'}</div>
+    <div class="result-title" style="color:${won?'var(--green)':'var(--red)'};">${won?'Excellent!':'Keep Going!'}</div>
+    <div class="result-sub">${lessonCorrect}/${lessonWords.length} correct</div>
+    <div class="result-stats">
+      <div class="rs-box"><div class="rs-num" style="color:var(--gold);">${lessonCorrect*10}</div><div class="rs-lbl">XP Earned</div></div>
+      <div class="rs-box"><div class="rs-num" style="color:var(--green);">${pct}%</div><div class="rs-lbl">Accuracy</div></div>
+      <div class="rs-box"><div class="rs-num" style="color:var(--blue);">${S.wordsLearned.size}</div><div class="rs-lbl">Total Words</div></div>
+    </div>
+    <button class="btn btn-green" onclick="this.closest('[style]').remove();">Continue 🚀</button>
+    ${!won?`<button class="btn btn-ghost" onclick="this.closest('[style]').remove(); startUnit(${currentUnit},0);">Try Again</button>`:''}
+  </div>`;
+  document.body.appendChild(modal);
+}
+
+function closeLessonScreen(){
+  document.getElementById('lesson-screen').classList.remove('open');
+  hideFeedback();
+  if(recognition){ recognition.stop(); recognition=null; }
+}
+
+// ============================================================
+// DAILY PROGRESS
+// ============================================================
+function updateDailyProgress(){
+  const pct = Math.min((S.wordsToday/50)*100, 100);
+  document.getElementById('dpFill').style.width=pct+'%';
+  document.getElementById('wordsToday').textContent=S.wordsToday;
+  if(S.wordsToday>=50 && !S.achievements['daily50']){
+    unlock('daily50'); confetti();
+    showBigReward();
+    toast('🏆 50 words today! Amazing!','gold');
+  } else if(S.wordsToday>=25 && !S.achievements['daily25']){
+    unlock('daily25'); toast('🌟 Halfway there! 25 words!','gold');
+  }
+  document.getElementById('dpLabel').textContent = S.wordsToday>=50
+    ? '🏆 Daily goal complete! Superstar!'
+    : (50-S.wordsToday)+' more words to win today\'s reward!';
+}
+
+function showBigReward(){
+  const m=document.createElement('div');
+  m.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:600;display:flex;align-items:center;justify-content:center;';
+  m.innerHTML=`<div style="text-align:center;padding:40px 24px;">
+    <div style="font-size:6rem;animation:bounceIn 0.5s ease;">🏆</div>
+    <div style="font-size:2rem;font-weight:900;background:linear-gradient(90deg,var(--gold),var(--orange));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin:12px 0;">DAILY GOAL!</div>
+    <div style="color:rgba(255,255,255,0.7);margin-bottom:8px;">50 words completed today!</div>
+    <div style="font-size:1.5rem;color:var(--gold);font-weight:800;margin-bottom:24px;">+200 Bonus XP! ⭐</div>
+    <button class="btn btn-green" style="max-width:200px;margin:0 auto;" onclick="this.closest('[style]').remove(); addXP(200);">Claim Reward 🎁</button>
+  </div>`;
+  document.body.appendChild(m);
+}
+
+// ============================================================
+// WORDS SCREEN
+// ============================================================
+let currentWordCat = 'Greetings';
+function renderWordsList(){
+  const cats=[...new Set(WORDS.map(w=>w.cat))];
+  document.getElementById('wordTabs').innerHTML=cats.map(c=>
+    `<button class="wtab${c===currentWordCat?' active':''}" onclick="switchCat('${c}')">${c}</button>`
+  ).join('');
+  const words=WORDS.filter(w=>w.cat===currentWordCat);
+  document.getElementById('wordListEl').innerHTML=words.map((w,i)=>`
+    <div class="word-card" onclick="speak('${esc(w.ru)}'); toast('🔊 ${esc(w.ru)}');">
+      <div class="wc-left">
+        <div class="wc-ru">${w.ru}</div>
+        <div class="wc-pron">${w.pron}</div>
+        <div class="wc-en">${w.en}</div>
+        <div class="wc-tanglish">${w.tanglish}</div>
+      </div>
+      <span class="wc-audio">🔊</span>
+      ${S.wordsLearned.has(w.ru)?'<div class="wc-learned"></div>':''}
+    </div>
+  `).join('');
+}
+
+function switchCat(cat){ currentWordCat=cat; renderWordsList(); }
+
+// ============================================================
+// PRACTICE MODES
+// ============================================================
+function startPractice(mode){
+  practiceMode=mode;
+  S.practiceCount++;
+  const words=WORDS.sort(()=>Math.random()-0.5).slice(0,10);
+  if(mode==='match') startMatch(words.slice(0,6));
+  else startLesson(words, -1);
+  saveS();
+}
+
+// Match game
+function startMatch(words){
+  const items=[...words.map(w=>({text:w.ru,id:w.ru,type:'ru'})),
+               ...words.map(w=>({text:w.en,id:w.ru,type:'en'}))].sort(()=>Math.random()-0.5);
+  let sel=null, matched=new Set();
+  document.getElementById('lesson-screen').classList.add('open');
+  const footer=document.getElementById('lsFooter'); footer.innerHTML='';
+  document.getElementById('lsProg').style.width='0%';
+  document.getElementById('lsHearts').innerHTML='';
+  const render=()=>{
+    document.getElementById('lsBody').innerHTML=`
+      <div class="q-type-label">🃏 Match Russian with English</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:16px;">
+        ${items.map((it,i)=>{
+          const isM=matched.has(it.id+it.type)||matched.has(it.id+(it.type==='ru'?'en':'ru'));
+          const isSel=sel&&sel.idx===i;
+          return `<button onclick="matchTap(${i})" style="padding:12px 8px;border-radius:10px;border:2px solid ${isM?'var(--green)':isSel?'var(--blue)':'var(--border)'};background:${isM?'rgba(88,204,2,0.12)':isSel?'rgba(28,176,246,0.12)':'var(--card)'};color:${isM?'var(--green)':isSel?'var(--blue)':'var(--white)'};font-size:${it.type==='ru'?'1.1rem':'0.9rem'};font-weight:700;cursor:${isM?'default':'pointer'};transition:all 0.2s;font-family:inherit;">${it.text}</button>`;
+        }).join('')}
+      </div>
+    `;
+  };
+  window.__matchItems=items; window.__matchSel=null; window.__matchMatched=new Set();
+  window.matchTap=(i)=>{
+    const items=window.__matchItems, matched=window.__matchMatched;
+    if(matched.has(items[i].id+items[i].type)) return;
+    if(!window.__matchSel){ window.__matchSel={idx:i,...items[i]}; render(); return; }
+    const prev=window.__matchSel; window.__matchSel=null;
+    if(prev.id===items[i].id && prev.type!==items[i].type){
+      matched.add(items[i].id+'ru'); matched.add(items[i].id+'en');
+      addXP(15); speak(items[i].type==='ru'?items[i].text:prev.text);
+      if(matched.size>=items.length){ setTimeout(()=>{ toast('🎉 All matched!',''); confetti(); closeLessonScreen(); },500); }
+    } else { toast('Try again!','red'); }
+    render();
+  };
+  render();
+}
+
+// ============================================================
+// PRACTICE TIP (Tanglish)
+// ============================================================
+const tips=[
+  '🎯 Russia la job poidhinga nu congrats! Russian kaththukkanum nu neenga mudivettadhu correct choice — daily 50 words padinga, 6 months la fluent aagalaamu!',
+  '🔊 Pronunciation practice: every word la oru "stress" (emphasis) irukku. That stressed syllable CAPITAL la irukku — adha hard-a sollunga. Example: pri-VYET (not PRI-vyet)',
+  '💡 Russian maraika easy trick: Namba Tamil words kooda Russian la similar irukku! "Chai" = Tea, "Sakhar" = Sugar — same root!',
+  '🧠 Daily routine: Kaalai 5 new words padinga, madhiyam 5, maalai 5, iravu 5. Mela podha podha remember aagum!',
+  '🎤 Speaking practice tip: First kekkaanum (listen), apuram repeat pannanum (shadow). This is how babies learn!',
+  '📱 Work la Russian colleagues kitta "Привет!" (Privyet!) nu sollunga — they will love it and help you learn more!',
+  '🔁 Spaced repetition: Today kaththukidha word-a, 1 day later, 3 days later, 1 week later again review pannunga. Memory strong aagum!',
+];
+let tipIdx=0;
+function renderPracticeTip(){
+  document.getElementById('tanglishTip').textContent=tips[tipIdx%tips.length];
+  tipIdx++;
+}
+
+// ============================================================
+// ACHIEVEMENTS
+// ============================================================
+const ACHIEVEMENTS = [
+  {id:'first_lesson',icon:'🎓',name:'First Lesson'},
+  {id:'unit_0',icon:'👋',name:'Greetings Pro'},
+  {id:'unit_4',icon:'💼',name:'Work Ready'},
+  {id:'unit_5',icon:'✈️',name:'Travel Ready'},
+  {id:'daily25',icon:'⭐',name:'25 Today'},
+  {id:'daily50',icon:'🏆',name:'50 Words/Day'},
+  {id:'xp100',icon:'💯',name:'100 XP'},
+  {id:'level5',icon:'🚀',name:'Level 5'},
+  {id:'words50',icon:'📚',name:'50 Words'},
+];
+
+function unlock(id){
+  if(S.achievements[id]) return;
+  S.achievements[id]=true;
+  const a=ACHIEVEMENTS.find(x=>x.id===id);
+  if(a) toast('🏆 Achievement: '+a.name,'gold');
+  renderAchievements(); saveS();
+}
+
+function checkAchievements(){
+  if(S.lessonsCompleted>=1) unlock('first_lesson');
+  if(S.wordsLearned.size>=50) unlock('words50');
+}
+
+function renderAchievements(){
+  const grid=document.getElementById('achGrid');
+  if(!grid) return;
+  grid.innerHTML=ACHIEVEMENTS.map(a=>`
+    <div class="ach-card${S.achievements[a.id]?' earned':''}">
+      <span class="ach-icon">${a.icon}</span>
+      <div class="ach-name">${a.name}</div>
+    </div>
+  `).join('');
+}
+
+// ============================================================
+// INIT
+// ============================================================
+window.addEventListener('load',()=>{
+  loadS();
+  buildLessonPath();
+  updateHeader();
+  updateDailyProgress();
+  renderAchievements();
+
+  // Splash hide
+  setTimeout(()=>{
+    const sp=document.getElementById('splash');
+    sp.style.opacity='0';
+    setTimeout(()=>sp.style.display='none',600);
+  },2600);
+
+  // Greet
+  setTimeout(()=>{
+    speak('Привет! Добро пожаловать!');
+    toast('👋 Привет! Welcome to РусскийПро!');
+  },3000);
+});
+</script>
+</body>
+</html>
