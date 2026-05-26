@@ -1,0 +1,8 @@
+[{
+  "relation": ["delegate_permission/common.handle_all_urls"],
+  "target": {
+    "namespace": "android_app",
+    "package_name": "com.shlab.ruslingo",
+    "sha256_cert_fingerprints": ["CB:2F:AD:07:46:B1:8B:C4:55:3C:84:5B:1B:73:95:2D:6A:03:7F:AE:AE:D8:57:44:32:92:4D:F9:5E:4C:88:12"]
+  }
+}]
