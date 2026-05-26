@@ -3,11 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>RusLingo V1.0</title>
 <link rel="manifest" href="/russiapro/manifest.json">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>RusLingo V1.0</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
 :root{
@@ -237,7 +237,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
 <!-- SPLASH -->
 <div id="splash">
   <div class="splash-flag">🇷🇺</div>
-  <div class="splash-title">РусскийПро</div>
+  <div class="splash-title">RusLingo V1.0</div>
   <div class="splash-sub">Free Russian Learning App</div>
   <div class="splash-bar"><div class="splash-fill" style="width:0"></div></div>
 </div>
@@ -248,7 +248,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
 
 <!-- HEADER -->
 <div id="header">
-  <div class="logo-text">🇷🇺 РусскийПро</div>
+  <div class="logo-text">🇷🇺 RusLingo V1.0</div>
   <div class="hdr-stats">
     <div class="hdr-stat streak">🔥 <span id="hStreak">1</span></div>
     <div class="hdr-stat xp">⭐ <span id="hXP">0</span></div>
@@ -852,8 +852,8 @@ function showNextQ(){
   // Rotate question types
   const types=['mcq_en','listen','speak','type','mcq_ru','builder'];
   qType = types[lessonIdx % types.length];
-  // Check browser support
-  if(qType==='speak' && !('SpeechRecognition' in window||'webkitSpeechRecognition' in window)) qType='type';
+  // Check browser support - skip speak on mobile if no mic
+  if(qType==='speak' && !('SpeechRecognition' in window||'webkitSpeechRecognition' in window)) qType='listen';
   renderQuestion();
 }
 
@@ -1015,7 +1015,7 @@ let recognition=null;
 function startSpeech(){
   const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
   if(!SR){ 
-    toast('Mic not supported on this device — Skipping!','red'); 
+    toast('Mic not supported — Skipping!','red'); 
     setTimeout(()=>skipSpeak(),800); 
     return; 
   }
@@ -1032,18 +1032,30 @@ function startSpeech(){
     if(qAnswered) return; qAnswered=true;
     const res=document.getElementById('speakResult');
     if(said.includes(target.slice(0,3))||target.includes(said.slice(0,3))){
-      if(res) res.textContent='✅ Heard: "'+e.results[0][0].transcript+'" — Correct!';
-      if(res) res.className='speak-result ok'; markCorrect();
+      if(res){ res.textContent='✅ Heard: "'+e.results[0][0].transcript+'" — Correct!'; res.className='speak-result ok'; }
+      markCorrect();
     } else {
-      if(res) res.textContent='❌ Heard: "'+e.results[0][0].transcript+'" — Try: '+qWord.ru;
-      if(res) res.className='speak-result fail'; markWrong();
+      if(res){ res.textContent='❌ Heard: "'+e.results[0][0].transcript+'" — Try: '+qWord.ru; res.className='speak-result fail'; }
+      markWrong();
     }
   };
-  recognition.onerror=()=>{ recognition=null; btn.classList.remove('recording'); if(status) status.textContent='Tap mic & speak Russian'; toast('Mic error — try again or skip','red'); };
-  recognition.onend=()=>{ recognition=null; btn.classList.remove('recording'); };
+  recognition.onerror=(e)=>{ 
+    recognition=null; 
+    if(btn) btn.classList.remove('recording'); 
+    if(status) status.textContent='Tap mic & speak Russian'; 
+    if(e.error==='not-allowed'||e.error==='service-not-allowed'){ 
+      toast('Mic permission denied — Skipping!','red'); 
+      setTimeout(()=>skipSpeak(),800); 
+    }
+  };
+  recognition.onend=()=>{ recognition=null; if(btn) btn.classList.remove('recording'); };
   recognition.start();
 }
-function skipSpeak(){ if(qAnswered) return; qAnswered=true; markCorrect(); nextQuestion(); }
+function skipSpeak(){ 
+  if(qAnswered) return; 
+  qAnswered=true; 
+  markCorrect(); 
+}
 
 // Feedback
 function markCorrect(){
