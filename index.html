@@ -888,14 +888,14 @@ function renderQuestion(){
       </div>
     `;
   } else if(qType==='listen'){
+    const listenOpts = [w.en, ...WORDS.filter(x=>x.en!==w.en).sort(()=>Math.random()-0.5).slice(0,3).map(x=>x.en)].sort(()=>Math.random()-0.5);
     body.innerHTML=`
       <div class="q-type-label">👂 Tap & Listen, then choose</div>
       <button class="listen-btn" onclick="speak('${esc(w.ru)}')">🔊</button>
       <div style="text-align:center;color:var(--muted);font-size:13px;margin-bottom:20px;">Tap to hear the word</div>
       <div class="q-tanglish">💡 ${w.tanglish}</div>
       <div class="options-grid" id="opts">
-        ${[w.en,...WORDS.filter(x=>x.en!==w.en).sort(()=>Math.random()-0.5).slice(0,3)].sort(()=>Math.random()-0.5)
-          .map(o=>`<button class="opt" onclick="checkMCQ(this,'${esc(o)}','${esc(w.en)}')">${o}</button>`).join('')}
+        ${listenOpts.map(o=>`<button class="opt" onclick="checkMCQ(this,'${esc(o)}','${esc(w.en)}')">${o}</button>`).join('')}
       </div>
     `;
     speak(w.ru);
@@ -948,10 +948,7 @@ function renderQuestion(){
   updateLessonHeader();
 }
 
-function esc(s){ 
-  if(s===null||s===undefined) return '';
-  return String(s).replace(/'/g,"\\'").replace(/"/g,'&quot;'); 
-}
+function esc(s){ if(s===null||s===undefined) return ''; return String(s).replace(/'/g,"\\'").replace(/"/g,'&quot;'); }
 
 // MCQ
 function checkMCQ(btn, selected, correct){
