@@ -3,11 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>RusLingo V1.0</title>
-<link rel="manifest" href="/russiapro/manifest.json">
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>РусскийПро - Free Russian Learning</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
 :root{
@@ -952,7 +948,10 @@ function renderQuestion(){
   updateLessonHeader();
 }
 
-function esc(s){ return (s||'').replace(/'/g,"\\'").replace(/"/g,'&quot;'); }
+function esc(s){ 
+  if(s===null||s===undefined) return '';
+  return String(s).replace(/'/g,"\\'").replace(/"/g,'&quot;'); 
+}
 
 // MCQ
 function checkMCQ(btn, selected, correct){
@@ -1072,7 +1071,7 @@ function showFeedback(ok, title, sub){
   const btn=document.getElementById('fbBtn');
   btn.textContent= lessonIdx+1>=lessonWords.length ? 'Finish 🎉' : 'Continue →';
   btn.className='btn '+(ok?'btn-green':'btn-red');
-  btn.onclick=nextQuestion;
+  btn.onclick=function(){ nextQuestion(); };
   bar.className='feedback-bar show '+(ok?'fb-correct':'fb-wrong');
 }
 
