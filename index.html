@@ -3,7 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>РусскийПро - Free Russian Learning</title>
+<title>RusLingo V1.0</title>
+<link rel="manifest" href="/russiapro/manifest.json">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
 :root{
@@ -888,7 +892,7 @@ function renderQuestion(){
       </div>
     `;
   } else if(qType==='listen'){
-    const listenOpts = [w.en, ...WORDS.filter(x=>x.en!==w.en).sort(()=>Math.random()-0.5).slice(0,3).map(x=>x.en)].sort(()=>Math.random()-0.5);
+    const listenOpts=[w.en,...WORDS.filter(x=>x.en!==w.en).sort(()=>Math.random()-0.5).slice(0,3).map(x=>x.en)].sort(()=>Math.random()-0.5);
     body.innerHTML=`
       <div class="q-type-label">👂 Tap & Listen, then choose</div>
       <button class="listen-btn" onclick="speak('${esc(w.ru)}')">🔊</button>
@@ -1010,13 +1014,17 @@ function checkBuilder(correct){
 let recognition=null;
 function startSpeech(){
   const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
-  if(!SR){ toast('Speech not supported — try Chrome/Edge','red'); skipSpeak(); return; }
+  if(!SR){ 
+    toast('Mic not supported on this device — Skipping!','red'); 
+    setTimeout(()=>skipSpeak(),800); 
+    return; 
+  }
   const btn=document.getElementById('micBtn');
   const status=document.getElementById('speakStatus');
   if(recognition){ recognition.stop(); return; }
   recognition=new SR();
   recognition.lang='ru-RU'; recognition.interimResults=false;
-  recognition.onstart=()=>{ btn.classList.add('recording'); status.textContent='🔴 Listening...'; };
+  recognition.onstart=()=>{ btn.classList.add('recording'); if(status) status.textContent='🔴 Listening...'; };
   recognition.onresult=(e)=>{
     const said=e.results[0][0].transcript.toLowerCase();
     const target=qWord.ru.toLowerCase();
@@ -1024,18 +1032,18 @@ function startSpeech(){
     if(qAnswered) return; qAnswered=true;
     const res=document.getElementById('speakResult');
     if(said.includes(target.slice(0,3))||target.includes(said.slice(0,3))){
-      res.textContent='✅ Heard: "'+e.results[0][0].transcript+'" — Correct!';
-      res.className='speak-result ok'; markCorrect();
+      if(res) res.textContent='✅ Heard: "'+e.results[0][0].transcript+'" — Correct!';
+      if(res) res.className='speak-result ok'; markCorrect();
     } else {
-      res.textContent='❌ Heard: "'+e.results[0][0].transcript+'" — Try: '+qWord.ru;
-      res.className='speak-result fail'; markWrong();
+      if(res) res.textContent='❌ Heard: "'+e.results[0][0].transcript+'" — Try: '+qWord.ru;
+      if(res) res.className='speak-result fail'; markWrong();
     }
   };
-  recognition.onerror=()=>{ recognition=null; btn.classList.remove('recording'); status.textContent='Tap mic & speak Russian'; };
+  recognition.onerror=()=>{ recognition=null; btn.classList.remove('recording'); if(status) status.textContent='Tap mic & speak Russian'; toast('Mic error — try again or skip','red'); };
   recognition.onend=()=>{ recognition=null; btn.classList.remove('recording'); };
   recognition.start();
 }
-function skipSpeak(){ if(qAnswered) return; qAnswered=true; markCorrect(); }
+function skipSpeak(){ if(qAnswered) return; qAnswered=true; markCorrect(); nextQuestion(); }
 
 // Feedback
 function markCorrect(){
